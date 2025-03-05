@@ -18,32 +18,48 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup PNPM
-        uses: pnpm/action-setup@v2
+        # uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v2.2.4
         with:
-          version: latest
+          # version: latest
+          version: 8
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install
-        shell: "bash"
-        working-directory: .
-        run: pnpm install
+        # shell: "bash"
+        # working-directory: .
+        working-directory: ${{ env.WORKING_DIR }}
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         shell: "bash"
-        working-directory: .
-        run: pnpm run build
+        # working-directory: .
+        # run: pnpm run build
+        run: pnpm run build -- --mode gh-pages
+        env:
+          NODE_ENV: production
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: "./dist/"
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
+      - uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v4
+
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4
