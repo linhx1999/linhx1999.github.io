@@ -10,24 +10,26 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 env:
   WORKING_DIR: .
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-22.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup PNPM
-        # uses: pnpm/action-setup@v2
         uses: pnpm/action-setup@v4
         with:
-          # version: latest
           version: 8
 
       - name: Setup Node.js
@@ -37,7 +39,6 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        # working-directory: .
         working-directory: ${{ env.WORKING_DIR }}
         run: pnpm install
 
@@ -53,5 +54,5 @@ jobs:
           path: "./dist/"
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
         id: deployment
+        uses: actions/deploy-pages@v4
