@@ -1,3 +1,7 @@
+## 💻 Demo
+
+Check out the [Blog](https://linhx1999.github.io/), hosted on GitHub Pages.
+
 ## 📐 Configure
 
 - Edit the configuration file **src/data/site.config.ts** for the basic blog metadata.
@@ -52,25 +56,9 @@ test
 
 ```
 
-## 📝 Activating draft mode
-
-To activate draft mode, add the property **draft: true** to the file, and it will no longer be displayed on the blog.
-
-Example :
-
-```ts
-title: MacBook Pro 2022
-description: 'The new MacBook Pro 2022 is here. With the Apple M2 chip, a new design, and more, the new MacBook Pro is the best laptop Apple has ever made.'
-pubDate: 'Jul 02 2022'
-heroImage: '../../assets/bg.jpg'
-category: 'Category 1'
-tags: ['JavaScript', 'css', 'HTML5', 'GitHub']
-draft: true <---
-```
-
 ## ⚡️ Frontmatter
 
-## Required properties:
+### Required properties:
 
 - Title
 - Description
@@ -78,7 +66,7 @@ draft: true <---
 - heroImage (post cover)
 - category (Choose a category from src/data/categories.ts)
 
-## Optional properties:
+### Optional properties:
 
 - draft (no need to include it, by default it's false)
 - tags
