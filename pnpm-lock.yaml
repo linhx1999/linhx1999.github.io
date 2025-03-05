@@ -29,8 +29,13 @@ devDependencies:
     specifier: ^1.0.4
     version: 1.0.4
   '@tailwindcss/typography':
+<<<<<<< HEAD
     specifier: 0.5.10
     version: 0.5.10(tailwindcss@3.4.4)
+=======
+    specifier: 0.5.13
+    version: 0.5.13(tailwindcss@3.3.5)
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
   '@tinacms/cli':
     specifier: ^1.5.30
     version: 1.5.31(@babel/core@7.23.6)(react-dom@18.2.0)(react@18.2.0)
@@ -3803,8 +3808,13 @@ snapshots:
       tslib: 2.4.1
     dev: true
 
+<<<<<<< HEAD
   /@graphql-codegen/plugin-helpers@5.0.4(graphql@15.8.0):
     resolution: {integrity: sha512-MOIuHFNWUnFnqVmiXtrI+4UziMTYrcquljaI5f/T/Bc7oO7sXcfkAvgkNWEEi9xWreYwvuer3VHCuPI/lAFWbw==}
+=======
+  /@graphql-codegen/plugin-helpers@5.0.3(graphql@15.8.0):
+    resolution: {integrity: sha512-yZ1rpULIWKBZqCDlvGIJRSyj1B2utkEdGmXZTBT/GVayP4hyRYlkd36AJV/LfEsVD8dnsKL5rLz2VTYmRNlJ5Q==}
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
@@ -3822,7 +3832,11 @@ snapshots:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
+<<<<<<< HEAD
       '@graphql-codegen/plugin-helpers': 5.0.4(graphql@15.8.0)
+=======
+      '@graphql-codegen/plugin-helpers': 5.0.3(graphql@15.8.0)
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
       '@graphql-tools/utils': 10.0.7(graphql@15.8.0)
       graphql: 15.8.0
       tslib: 2.5.3
@@ -3850,7 +3864,11 @@ snapshots:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
+<<<<<<< HEAD
       '@graphql-codegen/plugin-helpers': 5.0.4(graphql@15.8.0)
+=======
+      '@graphql-codegen/plugin-helpers': 5.0.3(graphql@15.8.0)
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
       '@graphql-codegen/typescript': 4.0.1(graphql@15.8.0)
       '@graphql-codegen/visitor-plugin-common': 4.0.1(graphql@15.8.0)
       auto-bind: 4.0.0
@@ -3866,7 +3884,11 @@ snapshots:
     peerDependencies:
       graphql: ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
+<<<<<<< HEAD
       '@graphql-codegen/plugin-helpers': 5.0.4(graphql@15.8.0)
+=======
+      '@graphql-codegen/plugin-helpers': 5.0.3(graphql@15.8.0)
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
       '@graphql-codegen/schema-ast': 4.0.0(graphql@15.8.0)
       '@graphql-codegen/visitor-plugin-common': 4.0.1(graphql@15.8.0)
       auto-bind: 4.0.0
@@ -3903,7 +3925,11 @@ snapshots:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
+<<<<<<< HEAD
       '@graphql-codegen/plugin-helpers': 5.0.4(graphql@15.8.0)
+=======
+      '@graphql-codegen/plugin-helpers': 5.0.3(graphql@15.8.0)
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
       '@graphql-tools/optimize': 2.0.0(graphql@15.8.0)
       '@graphql-tools/relay-operation-optimizer': 7.0.0(graphql@15.8.0)
       '@graphql-tools/utils': 10.0.7(graphql@15.8.0)
@@ -4539,8 +4565,13 @@ snapshots:
       tailwindcss: 3.4.4
     dev: true
 
+<<<<<<< HEAD
   /@tailwindcss/typography@0.5.10(tailwindcss@3.4.4):
     resolution: {integrity: sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==}
+=======
+  /@tailwindcss/typography@0.5.13(tailwindcss@3.3.5):
+    resolution: {integrity: sha512-ADGcJ8dX21dVVHIwTRgzrcunY6YY9uSlAHHGVKvkA+vLc5qLwEszvKts40lx7z0qc4clpjclwLeK5rVCV2P/uw==}
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
 >>>>>>> origin/dependabot/npm_and_yarn/astrojs/mdx-2.3.1
@@ -4606,7 +4637,11 @@ snapshots:
     hasBin: true
     dependencies:
       '@graphql-codegen/core': 2.6.8(graphql@15.8.0)
+<<<<<<< HEAD
       '@graphql-codegen/plugin-helpers': 5.0.4(graphql@15.8.0)
+=======
+      '@graphql-codegen/plugin-helpers': 5.0.3(graphql@15.8.0)
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
       '@graphql-codegen/typescript': 4.0.1(graphql@15.8.0)
       '@graphql-codegen/typescript-generic-sdk': 3.1.0(graphql-tag@2.12.6)(graphql@15.8.0)
       '@graphql-codegen/typescript-operations': 4.0.1(graphql@15.8.0)
@@ -4616,9 +4651,15 @@ snapshots:
       '@graphql-tools/load': 7.8.14(graphql@15.8.0)
       '@rollup/pluginutils': 5.0.5
       '@svgr/core': 6.3.1
+<<<<<<< HEAD
       '@tailwindcss/aspect-ratio': 0.4.2(tailwindcss@3.4.4)
       '@tailwindcss/line-clamp': 0.3.1(tailwindcss@3.4.4)
       '@tailwindcss/typography': 0.5.10(tailwindcss@3.4.4)
+=======
+      '@tailwindcss/aspect-ratio': 0.4.2(tailwindcss@3.3.5)
+      '@tailwindcss/line-clamp': 0.3.1(tailwindcss@3.3.5)
+      '@tailwindcss/typography': 0.5.13(tailwindcss@3.3.5)
+>>>>>>> origin/dependabot/npm_and_yarn/tailwindcss/typography-0.5.13
       '@tinacms/app': 1.2.29(@babel/core@7.23.6)(yup@0.32.11)
       '@tinacms/datalayer': 1.2.27(react@18.2.0)
       '@tinacms/graphql': 1.4.27(react@18.2.0)
