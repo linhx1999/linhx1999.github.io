@@ -18,41 +18,61 @@ env:
   WORKING_DIR: .
 
 jobs:
-  build-and-deploy:
+  build:
+    runs-on: ubuntu-22.04
+    # environment:
+    #   name: github-pages
+    #   url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install, build, and upload your site
+        uses: withastro/action@v3
+        with:
+          # node-version: 20 # 用于构建站点的特定 Node.js 版本，默认为 20。（可选）
+          node-version: 18
+          # package-manager: pnpm@latest # 应使用哪个 Node.js 包管理器来安装依赖项和构建站点。会根据存储库中的 lockfile 自动检测。（可选）
+
+
+      # - name: Setup PNPM
+      #   uses: pnpm/action-setup@v4
+      #   with:
+      #     version: 8
+
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 'lts/*'
+      #     cache: 'pnpm'
+
+      # - name: Install dependencies
+      #   working-directory: ${{ env.WORKING_DIR }}
+      #   run: pnpm install
+
+      # - name: Build
+      #   working-directory: ${{ env.WORKING_DIR }}
+      #   run: pnpm run build -- --mode gh-pages
+      #   env:
+      #     NODE_ENV: production
+
+      # - name: Upload Pages Artifact
+      #   uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: "./dist/"
+
+      # - name: Deploy to GitHub Pages
+      #   id: deployment
+      #   uses: actions/deploy-pages@v4
+
+
+  deploy:
+    needs: build
     runs-on: ubuntu-22.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        working-directory: ${{ env.WORKING_DIR }}
-        run: pnpm install
-
-      - name: Build
-        working-directory: ${{ env.WORKING_DIR }}
-        run: pnpm run build -- --mode gh-pages
-        env:
-          NODE_ENV: production
-
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "./dist/"
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
