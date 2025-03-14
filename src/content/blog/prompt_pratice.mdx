@@ -2,7 +2,7 @@
 heroImage: /src/assets/bg.jpg
 category: 学习
 description: 关于提示词工程的学习经验记录
-pubDate: 2024-08-31T16:00:00.000Z
+pubDate: 2025-03-13T16:00:00.000Z
 draft: false
 tags:
   - pratice
@@ -169,7 +169,7 @@ A conversation between User and Assistant. The user asks a question, and the Ass
 
 示例最好使用\<example\>标签包裹（如果有多个，则嵌套在\<examples\>标签内）以保持结构。
 
-example:
+**_example:_**
 
 ```xml
 <example>
@@ -195,14 +195,34 @@ example:
 
 **_example:_**
 
-```xml
+```markdown
 在...之前先在 <thinking> 标签中思考。首先，...。然后，...。最后，在 <answer> 标签中使用你的分析...。
+```
+
+```markdown
+A conversation between User and Assistant.
+The user asks a question, and the Assistant solves it.
+The assistant first thinks about the reasoning process in the mind and then provides the user with the answer.
+The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags,
+respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>.
+User: {prompt}.
+Assistant:
 ```
 
 # 4.角色提示
 
-不同的角色会对不同的数据有不同的理解。
-
-- 增强准确性：在法律分析或财务建模等复杂场景中，角色提示可以显著提升Claude的表现。
-- 定制语气：无论您需要的是CFO的简洁风格还是文案写作的独特风格，角色提示都能调整大模型的沟通方式。
+- 不同的角色会对不同的数据有不同的理解；
+- 通常只用在系统提示词的开头；
+- 增强准确性：在法律分析或财务建模等复杂场景中，角色提示可以显著提升大模型的表现；
+- 定制语气：无论您需要的是CFO的简洁风格还是文案写作的独特风格，角色提示都能调整大模型的沟通方式；
 - 提升专注度：通过设定角色背景，大模型能更好地围绕任务的具体要求展开工作。
+
+**_example:_**
+
+```markdown
+You are a helpful assistant.
+```
+
+```markdown
+你是一个专业的金融分析师。
+```
