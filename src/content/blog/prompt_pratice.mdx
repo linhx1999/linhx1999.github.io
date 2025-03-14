@@ -11,66 +11,82 @@ tags:
 title: 提示工程经验总结
 ---
 
-## Prompt
+# 0. Prompt 工程
 
-“prompt”（提示词）指的是输入给模型的一段文本或指令，这段文本或指令旨在引导模型生成特定类型的响应或执行特定任务。其目的是为了给模型提供上下文信息，帮助模型更好地理解用户的意图，并据此生成相关且有用的输出。
+“prompt”（提示词）指的是**输入给模型的一段文本或指令**，这段文本或指令旨在引导模型生成特定类型的响应或执行特定任务。
+其目的是为了给模型提供上下文信息，帮助模型更好地理解用户的意图，并据此生成相关且有用的输出。
 
-提示词的效果会受到多个因素的影响，包括但不限于大语言模型的版本、应用场景、输入数据的长度以及标记变量的方式等。尽管提示词的写法会影响LLM的输出结果，但有一些技巧在多个模型中是通用的。本文旨在记录这些通用技巧，以帮助提高模型输出结果的质量。
+提示词的效果会受到多个因素的影响，包括但不限于**大语言模型的版本、应用场景、输入数据的长度以及标记变量的方式**等。
+尽管提示词的写法会影响LLM的输出结果，但有一些技巧在多个模型中是通用的。本文旨在记录这些通用技巧，以帮助提高模型输出结果的质量。
 
-### 参考资料：
+**参考资料：**
 
 - [Claude提示工程](https://docs.anthropic.com/zh-CN/docs/build-with-claude/prompt-engineering/overview)
 - [openai提示工程](https://platform.openai.com/docs/guides/prompt-engineering)
 - [ChatGLM指令工程方法与实践](https://www.bilibili.com/video/BV1fw4m1k7Ea/?spm_id_from=333.1365.top_right_bar_window_custom_collection.content.click&vd_source=6e29cbb374a8b5e5f6affc7894de614a)
+- [deepseek官方使用指南](https://github.com/deepseek-ai/DeepSeek-R1?tab=readme-ov-file#usage-recommendations)
 
-### 1.使用具体的工作步骤
+# 1. 使用markdown格式编写提示词
 
-> **清晰提示的黄金法则**
-> 向同事展示你的提示，最好是对任务几乎没有背景的人，并要求他们按照指示操作。如果他们感到困惑，Claude可能也会感到困惑。
+## 什么是 Markdown 格式？
 
-把llm当作是一个刚来公司的实习生，他有很强大的能力，但对公司业务不熟悉。所以我们需要具体地告诉大模型我们需要做什么，怎么做。最好使用markdown语法中的编号列表或项目符号，以更好地确保大模型按照你想要的方式执行任务。
-
-example:
+**Markdown** 是一种轻量级的标记语言，它通过简单的符号（如 `#`、`*`、`-` 等）对文本进行格式化，
+最终可以转换为 HTML、PDF 或其他富文本格式。它的设计目标是让文本内容**易读易写**，同时保持纯文本的简洁性。
 
 ```markdown
-Use the following step-by-step instructions to respond to user inputs.
+# 一级标题
 
-1. action_1
-2. action_2
-3. aciont_3
+## 二级标题
+
+- 列表项 1
+- 列表项 2
+  **加粗文字**  
+  `代码片段`
 ```
 
-### 2.使用XML标签构建提示
+---
 
-XML（Extensible Markup Language，可扩展标记语言）是一种用于存储和传输数据的标记语言。XML标签用于定义文档的结构和数据，其中每个标签都用尖括号包围。XML的标签与HTML的标签类似，但不同的是，XML标签是自定义的，可以根据需要创建任何标签来描述数据。
+## 为什么要用 Markdown 编写大语言模型提示词？
 
+在与大语言模型（如 GPT、通义千问等）交互时，使用 Markdown 格式的提示词有以下优势：
+
+- 通过**标题、分段、列表**等结构划分内容，帮助模型更准确地理解指令的层次和重点；
+- 使用代码块（\`\`\`）或引用（\>）等符号，将提示词与**长文本、表格、代码**元素等区分开，避免模型混淆输入内容；
+- Markdown 是纯文本格式，可以在任何编辑器中编写，且易于版本控制（如 Git）；
+- 结构化的提示词模板（如角色设定、任务描述、示例）便于复用
+- 目前多数大语言模型的输出结果都是用 Markdown 格式编写的，因此在与大语言模型交互时，使用 Markdown 格式的提示词有助于提高输出结果的质量。
+
+---
+
+## 如何用 Markdown 编写提示词？
+
+**_以下是一个典型提示词的编写框架和示例：_**
+
+```markdown
+# 电商产品评论情感分析
+
+## 任务描述
+
+分析用户评论的情感倾向（正面/负面）。
+
+## 示例
+
+Input: "这款手机性价比超高，但电池续航太差了。"
+Output: "中性"
+```
+
+## 使用XML和HTML标签辅助编写
+
+许多 Markdown 应用程序允许你在 Markdown 格式文本中使用 HTML 标签。
+
+XML（Extensible Markup Language，可扩展标记语言）是一种用于**存储和传输数据**的标记语言。
 大语言模型可以识别和生成信息的层次结构，并使用类似XML标签的概念来组织信息，从而使数据更易于处理和检索。
 
-#### 为什么要使用XML？
+- 当提示涉及多个组件，如上下文、指令和示例时，XML标签可以构建一个清晰、良好的提示词结构，帮助大模型更准确地解析你的提示，从而产生更高质量的输出。
+- 例如使用诸如\<instructions\>、\<example\>和\<formatting\>之类的标签来清晰地分隔提示的不同部分。这可以防止大模型混淆指令、示例和上下文。
+- **将XML标签与其他技术结合使用**：如多样本提示（\<examples\>）或思维链（\<thinking\>、\<answer\>）。这将创建超结构化、高性能的提示。
 
-当提示涉及多个组件，如上下文、指令和示例时，XML标签可以成为游戏规则的改变者。它们可以构建一个清晰、良好的提示词结构，帮助大模型更准确地解析你的提示，从而产生更高质量的输出。
-
-- **清晰度**：清晰地分隔提示的不同部分，确保提示结构良好。
-- **准确性**：减少由大模型误解提示部分而导致的错误。例如使用诸如\<instructions>、\<example>和\<formatting>之类的标签来清晰地分隔提示的不同部分。这可以防止大模型混淆指令、示例和上下文。
-- **灵活性**：容易复用，轻松找到、添加、删除或修改提示的部分，而无需重写所有内容。
-- **可解析性**：让大模型在其输出中使用XML标签，使得通过后处理更容易提取其响应的特定部分。
-
-#### 最佳实践：
-
-- **保持一致性**：在整个提示中使用相同的标签名称，并在谈论内容时引用这些标签名称（例如，使用\<contract>标签中的合同来...）。
-- **嵌套标签**：对于层次结构内容，你应该嵌套标签
-
-```xml
-<outer>
-  <inner>
-    {content}
-  </inner>
-</outer>
-```
-
-- **将XML标签与其他技术结合使用**：如多样本提示（\<examples>）或思维链（\<thinking>、\<answer>）。这将创建超结构化、高性能的提示。
-
-#### 常用标签例子:
+**_常用标签例子:_**
 
 ```xml
 <!-- few shots标签 -->
@@ -79,12 +95,12 @@ XML（Extensible Markup Language，可扩展标记语言）是一种用于存储
 </examples>
 
 
-
 <!-- 数据变量标签，可以为任意变量 -->
 使用这些data进行报告：
 <data>
-  {{SPREADSHEET_DATA}}
+{{SPREADSHEET_DATA}}
 </data>
+
 
 <!-- 指示标签，常在指示中使用其他数据变量标签 -->
 Use the following step-by-step instructions to respond to user inputs.
@@ -99,14 +115,20 @@ Use the following step-by-step instructions to respond to user inputs.
 5. 在<recommendations>标签中列出可行的建议。
 </instructions>
 
+
 <!-- 格式标签 -->
 输出遵循这种structure：
 <formatting_example>
-  {{Q1_REPORT}}
+{{Q1_REPORT}}
 </formatting_example>
 
+
 <!-- cot标签的使用 -->
-在...之前先在 <thinking> 标签中思考。首先，...。然后，...。最后，在 <answer> 标签中使用你的分析...。
+在...之前先在 <thinki></thinki> 标签中思考。首先，...。然后，...。最后，在 <answer></answer> 标签中使用你的分析回答问题...。
+
+<!-- R1技术报告中的DeepSeek-R1-Zero训练模板 -->
+A conversation between User and Assistant. The user asks a question, and the Assistant solves it. The assistant first thinks about the reasoning process in the mind and then provides the user with the answer. The reasoning process and answer are enclosed within <think> </think> and <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>. User: prompt. Assistant:
+
 
 <!-- 多文档标签 -->
 <!-- 通常将长文档放在提示词顶部，可以提高模型输出效果 -->
@@ -135,17 +157,17 @@ Use the following step-by-step instructions to respond to user inputs.
 
 ```
 
-### 3.样本提示
+# 2.样本提示
 
 示例是获得大模型生成所需内容的秘密武器捷径。通过在提示中提供一些精心制作的示例，可以显著提高大模型输出的准确性、一致性和质量。 这种技术被称为少样本或多次提示（few shots），对于需要结构化输出或遵循特定格式的任务特别有效。
 
-#### 为什么使用示例？
+## 为什么使用示例？
 
 - 准确性: 示例减少对指令的误解。
 - 一致性: 示例强制执行统一的结构和风格。
 - 性能: 精心选择的示例提升Claude处理复杂任务的能力。
 
-示例最好使用\<example>标签包裹（如果有多个，则嵌套在\<examples>标签内）以保持结构。
+示例最好使用\<example\>标签包裹（如果有多个，则嵌套在\<examples\>标签内）以保持结构。
 
 example:
 
@@ -158,30 +180,29 @@ example:
 </example>
 ```
 
-### 4.思维链提示
+# 3.思维链提示
 
 当面对复杂的任务如研究、分析或问题解决时，给 大模型思考的空间可以显著提高其表现。这种被称为思维链（CoT）提示的技术鼓励大模型逐步分解问题，从而产生更准确和细致的输出。
 
-#### 优势：
+**_优势：_**
 
 - 准确性：逐步解决问题可以减少错误，尤其是在数学、逻辑、分析或一般复杂任务中。
 - 连贯性：结构化思考生成更加连贯、组织良好的回答。
 - 调试：查看大模型的思考过程有助于找出提示词中可能不清晰的地方。
 
-#### 劣势：
-
+**_劣势：_**
 并非所有任务都需要深入思考，增加输出长度可能影响延迟。
 
-example:
+**_example:_**
 
 ```xml
 在...之前先在 <thinking> 标签中思考。首先，...。然后，...。最后，在 <answer> 标签中使用你的分析...。
 ```
 
-### 5.角色提示
+# 4.角色提示
 
 不同的角色会对不同的数据有不同的理解。
 
-- **增强准确性：**在法律分析或财务建模等复杂场景中，角色提示可以显著提升Claude的表现。
-- **定制语气：**无论您需要的是CFO的简洁风格还是文案写作的独特风格，角色提示都能调整大模型的沟通方式。
-- **提升专注度：**通过设定角色背景，大模型能更好地围绕任务的具体要求展开工作。
+- 增强准确性：在法律分析或财务建模等复杂场景中，角色提示可以显著提升Claude的表现。
+- 定制语气：无论您需要的是CFO的简洁风格还是文案写作的独特风格，角色提示都能调整大模型的沟通方式。
+- 提升专注度：通过设定角色背景，大模型能更好地围绕任务的具体要求展开工作。
