@@ -1,8 +1,8 @@
 import { collection, config, fields } from "@keystatic/core";
 import { SITE } from "./src/config";
 
-const BLOG_IMAGE_DIRECTORY = "src/assets/images/blog";
-const BLOG_IMAGE_PUBLIC_PATH = "@/assets/images/blog/";
+const BLOG_IMAGE_DIRECTORY = "src/assets/images";
+const BLOG_IMAGE_PUBLIC_PATH = "@/assets/images/";
 
 export default config({
   storage: {
