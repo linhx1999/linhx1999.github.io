@@ -27,6 +27,7 @@ export default config({
         title: fields.slug({
           name: {
             label: "标题",
+            validation: { isRequired: true },
           },
           slug: {
             label: "Slug",
@@ -34,20 +35,25 @@ export default config({
         }),
         description: fields.text({
           label: "摘要",
+          description: "文章描述，用于摘要和 SEO 优化",
           multiline: true,
         }),
         pubDatetime: fields.date({
           label: "发布日期",
+          description: "默认从文件创建时间自动获取",
         }),
         modDatetime: fields.date({
           label: "修改日期",
+          description: "默认从文件修改时间自动获取（与创建时间差异小于1分钟则为空）",
         }),
         draft: fields.checkbox({
           label: "草稿",
-          defaultValue: false,
+          description: "新文章默认是草稿，需手动取消勾选以发布",
+          defaultValue: true,
         }),
         featured: fields.checkbox({
-          label: "置顶",
+          label: "首页展示",
+          description: "是否展示在首页",
           defaultValue: false,
         }),
         tags: fields.array(
@@ -65,9 +71,11 @@ export default config({
         }),
         canonicalURL: fields.url({
           label: "Canonical URL",
+          description: "规范 URL（绝对路径），用于文章已存在于其他来源的情况",
         }),
         hideEditPost: fields.checkbox({
           label: "隐藏编辑按钮",
+          description: "是否隐藏编辑文章按钮",
           defaultValue: false,
         }),
         timezone: fields.text({
@@ -76,6 +84,7 @@ export default config({
         }),
         ogImage: fields.image({
           label: "OG 图片",
+          description: "社交媒体分享图片，默认使用站点配置或自动生成",
           directory: BLOG_IMAGE_DIRECTORY,
           publicPath: BLOG_IMAGE_PUBLIC_PATH,
         }),
