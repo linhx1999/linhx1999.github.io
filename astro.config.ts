@@ -1,6 +1,9 @@
 import { defineConfig, envField } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@astrojs/react";
+import markdoc from "@astrojs/markdoc";
 import sitemap from "@astrojs/sitemap";
+import keystatic from "@keystatic/astro";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import {
@@ -11,6 +14,8 @@ import {
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import { SITE } from "./src/config";
 
+const skipKeystatic = process.env.SKIP_KEYSTATIC === "true";
+
 // https://astro.build/config
 export default defineConfig({
   site: SITE.website,
@@ -18,7 +23,15 @@ export default defineConfig({
     sitemap({
       filter: page => SITE.showArchives || !page.endsWith("/archives"),
     }),
+    react(),
+    markdoc(),
+    ...(skipKeystatic ? [] : [keystatic()]),
   ],
+  redirects: skipKeystatic
+    ? {}
+    : {
+        "/admin": "/keystatic",
+      },
   markdown: {
     remarkPlugins: [remarkToc, [remarkCollapse, { test: "Table of contents" }]],
     shikiConfig: {
