@@ -20,6 +20,7 @@ concurrency:
 
 env:
   WORKING_DIR: .
+  SKIP_KEYSTATIC: true
 
 jobs:
   build:

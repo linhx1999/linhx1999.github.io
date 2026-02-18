@@ -167,6 +167,20 @@ All commands are run from the root of the project, from a terminal:
 
 > **_Warning!_** Windows PowerShell users may need to install the [concurrently package](https://www.npmjs.com/package/concurrently) if they want to [run diagnostics](https://docs.astro.build/en/reference/cli-reference/#astro-check) during development (`astro check --watch & astro dev`). For more info, see [this issue](https://github.com/satnaing/astro-paper/issues/113).
 
+## ✍️ Web Writing Admin (Local Only)
+
+This project includes a Keystatic-based web editor for writing blog posts locally.
+
+1. Install dependencies with `pnpm install`.
+2. Start the dev server with `pnpm dev`.
+3. Open `http://127.0.0.1:4321/admin`.
+4. Create or edit posts in the `blog` collection.
+5. Commit and push changes to publish (`main` branch).
+
+Notes:
+- The admin UI is routed from `/admin` to Keystatic's internal `/keystatic` route.
+- Production deployment sets `SKIP_KEYSTATIC=true`, so the admin UI is not exposed on GitHub Pages.
+
 ## ✨ Feedback & Suggestions
 
 If you have any suggestions/feedback, you can contact me via [my email](mailto:contact@satnaing.dev). Alternatively, feel free to open an issue if you find bugs or want to request new features.
