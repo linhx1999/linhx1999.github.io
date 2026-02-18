@@ -1,6 +1,5 @@
 ---
 title: 使用Markdown和XML构建提示词
-slug: Construct-Prompt-with-Markdown-and-XML
 pubDatetime: 2025-08-03
 description:
   提示词工程

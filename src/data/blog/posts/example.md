@@ -3,7 +3,6 @@ author: 作者
 pubDatetime: 2024-01-15T10:00:00Z
 modDatetime: 2024-01-20T15:30:00Z
 title: 文章标题
-slug: article-slug
 featured: false
 draft: false
 tags:
