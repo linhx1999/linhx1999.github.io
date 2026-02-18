@@ -102,6 +102,10 @@ pnpm format
 - 模式定义在 `src/content.config.ts`
 - 使用 Zod 进行类型验证
 
+## 博客文章编写规范
+
+参考 `src/data/blog/posts/example.md`：
+
 ## 环境变量
 - 在 `astro.config.ts` 中定义 env schema
 - 客户端变量使用 `PUBLIC_` 前缀
@@ -109,3 +113,21 @@ pnpm format
 ## Git
 - 使用 pnpm（lockfile: `pnpm-lock.yaml`）
 - 不要提交 `dist/` 或 `.astro/`
+
+### Commit 规范
+- **使用中文**编写 commit 信息
+- 遵循约定式提交（Conventional Commits）规范
+- 格式：`<类型>(<作用域>): <描述>`
+- 常用类型：
+  - `feat`: 新功能
+  - `fix`: 修复
+  - `docs`: 文档
+  - `style`: 代码风格（格式化、缺失分号等，不影响代码逻辑）
+  - `refactor`: 重构（非 feat/fix 的代码更改）
+  - `perf`: 性能优化
+  - `test`: 测试
+  - `chore`: 构建过程或辅助工具变动
+- 示例：
+  - `feat(blog): 添加文章搜索功能`
+  - `fix(layout): 修复移动端导航栏重叠问题`
+  - `docs(readme): 更新安装说明`
