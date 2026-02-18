@@ -9,10 +9,10 @@ importers:
   .:
     dependencies:
       '@astrojs/markdoc':
-        specifier: latest
+        specifier: ~0.15.10
         version: 0.15.10(@types/react@19.2.14)(astro@5.16.15(idb-keyval@6.2.2)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.41.1)(typescript@5.8.3)(yaml@2.7.1))(react@19.2.4)
       '@astrojs/react':
-        specifier: latest
+        specifier: ~4.4.2
         version: 4.4.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@2.4.2)(lightningcss@1.30.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yaml@2.7.1)
       '@astrojs/rss':
         specifier: ~4.0.15
@@ -21,10 +21,10 @@ importers:
         specifier: ~3.7.0
         version: 3.7.0
       '@keystatic/astro':
-        specifier: latest
+        specifier: ~5.0.6
         version: 5.0.6(@keystatic/core@0.5.48(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(astro@5.16.15(idb-keyval@6.2.2)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.41.1)(typescript@5.8.3)(yaml@2.7.1))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@keystatic/core':
-        specifier: latest
+        specifier: ~0.5.48
         version: 0.5.48(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@resvg/resvg-js':
         specifier: ~2.6.2
@@ -42,10 +42,10 @@ importers:
         specifier: ~4.1.1
         version: 4.1.1
       react:
-        specifier: ^19.2.4
+        specifier: ~19.2.4
         version: 19.2.4
       react-dom:
-        specifier: ^19.2.4
+        specifier: ~19.2.4
         version: 19.2.4(react@19.2.4)
       remark-collapse:
         specifier: ~0.1.2
@@ -4321,7 +4321,7 @@ snapshots:
   '@babel/helper-module-imports@7.28.6':
     dependencies:
       '@babel/traverse': 7.29.0
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -4787,8 +4787,8 @@ snapshots:
 
   '@jridgewell/remapping@2.3.5':
     dependencies:
-      '@jridgewell/gen-mapping': 0.3.8
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/gen-mapping': 0.3.13
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -6233,24 +6233,24 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
       '@types/babel__generator': 7.27.0
       '@types/babel__template': 7.4.4
       '@types/babel__traverse': 7.28.0
 
   '@types/babel__generator@7.27.0':
     dependencies:
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
 
   '@types/babel__traverse@7.28.0':
     dependencies:
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
 
   '@types/debug@4.1.12':
     dependencies:
