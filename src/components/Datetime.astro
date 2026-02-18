@@ -12,7 +12,7 @@ export interface Props {
   class?: string;
   size?: "sm" | "lg";
   timezone: string | undefined;
-  pubDatetime: string | Date;
+  pubDatetime: string | Date | null | undefined;
   modDatetime: string | Date | undefined | null;
 }
 
@@ -23,6 +23,10 @@ const {
   class: className = "",
   timezone: postTimezone,
 } = Astro.props;
+
+if (!pubDatetime) {
+  throw new Error("Datetime component requires pubDatetime to be defined");
+}
 
 /* ========== Formatted Datetime ========== */
 const isModified = modDatetime && modDatetime > pubDatetime;

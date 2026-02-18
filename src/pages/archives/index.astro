@@ -14,6 +14,7 @@ if (!SITE.showArchives) {
 }
 
 const posts = await getCollection("blog", ({ data }) => !data.draft);
+const postsWithDates = posts.filter(post => post.data.pubDatetime);
 
 const months = [
   "January",
@@ -36,8 +37,8 @@ const months = [
   <Main pageTitle="Archives" pageDesc="All the articles I've archived.">
     {
       Object.entries(
-        getPostsByGroupCondition(posts, post =>
-          post.data.pubDatetime.getFullYear()
+        getPostsByGroupCondition(postsWithDates, post =>
+          post.data.pubDatetime!.getFullYear()
         )
       )
         .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
@@ -48,7 +49,7 @@ const months = [
             {Object.entries(
               getPostsByGroupCondition(
                 yearGroup,
-                post => post.data.pubDatetime.getMonth() + 1
+                post => post.data.pubDatetime!.getMonth() + 1
               )
             )
               .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
@@ -63,10 +64,10 @@ const months = [
                       .sort(
                         (a, b) =>
                           Math.floor(
-                            new Date(b.data.pubDatetime).getTime() / 1000
+                            new Date(b.data.pubDatetime!).getTime() / 1000
                           ) -
                           Math.floor(
-                            new Date(a.data.pubDatetime).getTime() / 1000
+                            new Date(a.data.pubDatetime!).getTime() / 1000
                           )
                       )
                       .map(data => (

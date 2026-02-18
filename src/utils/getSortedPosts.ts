@@ -4,13 +4,14 @@ import postFilter from "./postFilter";
 const getSortedPosts = (posts: CollectionEntry<"blog">[]) => {
   return posts
     .filter(postFilter)
+    .filter(post => post.data.pubDatetime || post.data.modDatetime)
     .sort(
       (a, b) =>
         Math.floor(
-          new Date(b.data.modDatetime ?? b.data.pubDatetime).getTime() / 1000
+          new Date(b.data.modDatetime ?? b.data.pubDatetime!).getTime() / 1000
         ) -
         Math.floor(
-          new Date(a.data.modDatetime ?? a.data.pubDatetime).getTime() / 1000
+          new Date(a.data.modDatetime ?? a.data.pubDatetime!).getTime() / 1000
         )
     );
 };

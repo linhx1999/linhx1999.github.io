@@ -11,11 +11,13 @@ export async function GET() {
     title: SITE.title,
     description: SITE.desc,
     site: SITE.website,
-    items: sortedPosts.map(({ data, id, filePath }) => ({
-      link: getPath(id, filePath),
-      title: data.title,
-      description: data.description,
-      pubDate: new Date(data.modDatetime ?? data.pubDatetime),
-    })),
+    items: sortedPosts
+      .filter(({ data }) => data.pubDatetime || data.modDatetime)
+      .map(({ data, id, filePath }) => ({
+        link: getPath(id, filePath),
+        title: data.title,
+        description: data.description ?? undefined,
+        pubDate: new Date(data.modDatetime ?? data.pubDatetime!),
+      })),
   });
 }

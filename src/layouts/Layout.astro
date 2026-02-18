@@ -8,10 +8,10 @@ export interface Props {
   title?: string;
   author?: string;
   profile?: string;
-  description?: string;
+  description?: string | null;
   ogImage?: string;
   canonicalURL?: string;
-  pubDatetime?: Date;
+  pubDatetime?: Date | null;
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
 }
