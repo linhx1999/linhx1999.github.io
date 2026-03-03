@@ -1,8 +1,7 @@
 ---
 title: 使用Markdown和XML构建提示词
 pubDatetime: 2025-08-03
-description:
-  提示词工程
+description: 提示词工程
 featured: false
 draft: false
 tags:
@@ -10,14 +9,12 @@ tags:
   - Prompt Engineering
 ---
 
-
 # 参考资料
 
 - [Claude提示工程](https://docs.anthropic.com/zh-CN/docs/build-with-claude/prompt-engineering/overview)
 - [OpenAI提示工程](https://platform.openai.com/docs/guides/prompt-engineering)
 - [ChatGLM指令工程方法与实践](https://www.bilibili.com/video/BV1fw4m1k7Ea/?spm_id_from=333.1365.top_right_bar_window_custom_collection.content.click&vd_source=6e29cbb374a8b5e5f6affc7894de614a)
 - [Deepseek官方使用指南](https://github.com/deepseek-ai/DeepSeek-R1?tab=readme-ov-file#usage-recommendations)
-
 
 # 提示词
 
@@ -29,7 +26,6 @@ tags:
 提示词的效果会受到多个因素的影响，包括但不限于**大语言模型的版本、应用场景、输入数据的长度以及标记变量的方式**等。
 尽管提示词的写法会影响LLM的输出结果，但有一些技巧在多个模型中是通用的。
 
-
 # 什么是 Markdown 格式？
 
 **Markdown** 是一种轻量级的标记语言，它通过简单的符号（如 `#`、`*`、`-` 等）对文本进行格式化，
@@ -39,6 +35,7 @@ tags:
 # 一级标题
 
 ## 二级标题
+
 - 列表项 1
 - 列表项 2
 ```
@@ -47,19 +44,17 @@ tags:
 
 可扩展标记语言（英语：Extensible Markup Language，简称：XML）是一种标记语言和用于存储、传输和重构松散数据的文件格式。它定义了一系列编码文档的规则以使其在人类可读的同时机器可读。
 
-
 # 为什么要用 Markdown 和 XML 编写大语言模型提示词？
 
 - 使用Markdown格式和XML标签的组合，能帮助大语言模型更准确地理解提示词的逻辑结构和上下文边界。
 - **Markdown的优势：**
-    - 通过标题、分段、列表、代码块（\`\`\` \`\`\`）等结构化元素，清晰划分内容，突出重点，并有效区分提示词与长文本、表格、代码等元素，避免模型混淆。
-    - 提升提示词的可读性，便于开发、维护、调试、团队协作及版本管理（如将提示词写入.md文件中，方便编辑器渲染）。
-    - 结构化的提示词模板（如角色设定、任务描述、示例）更易于复用。
-    - 从直觉上看，多数大语言模型默认以Markdown格式输出，因此使用Markdown格式的提示词有助于提高输出质量。
+  - 通过标题、分段、列表、代码块（\`\`\` \`\`\`）等结构化元素，清晰划分内容，突出重点，并有效区分提示词与长文本、表格、代码等元素，避免模型混淆。
+  - 提升提示词的可读性，便于开发、维护、调试、团队协作及版本管理（如将提示词写入.md文件中，方便编辑器渲染）。
+  - 结构化的提示词模板（如角色设定、任务描述、示例）更易于复用。
+  - 从直觉上看，多数大语言模型默认以Markdown格式输出，因此使用Markdown格式的提示词有助于提高输出质量。
 - **XML标签的优势：**
-    - 明确界定提示中不同组件（如指令、示例、上下文）的开始与结束，例如使用诸如`<instructions>`、`<example>`之类的标签，构建清晰的提示词结构，从而帮助模型更准确地解析，产生更高质量的输出。
-    - XML属性还可用于定义内容的元数据，方便指令引用。
-
+  - 明确界定提示中不同组件（如指令、示例、上下文）的开始与结束，例如使用诸如`<instructions>`、`<example>`之类的标签，构建清晰的提示词结构，从而帮助模型更准确地解析，产生更高质量的输出。
+  - XML属性还可用于定义内容的元数据，方便指令引用。
 
 # 一些样例
 
@@ -83,17 +78,17 @@ Output: "中性"
 ```md
 # Identity
 
-You are coding assistant that helps enforce the use of snake case 
-variables in JavaScript code, and writing code that will run in 
+You are coding assistant that helps enforce the use of snake case
+variables in JavaScript code, and writing code that will run in
 Internet Explorer version 6.
 
 # Instructions
 
-* When defining variables, use snake case names (e.g. my_variable) 
+- When defining variables, use snake case names (e.g. my_variable)
   instead of camel case names (e.g. myVariable).
-* To support old browsers, declare variables using the older 
+- To support old browsers, declare variables using the older
   "var" keyword.
-* Do not give responses with Markdown formatting, just return 
+- Do not give responses with Markdown formatting, just return
   the code as requested.
 
 # Examples
@@ -124,7 +119,6 @@ Use this data for your report:<data>{{SPREADSHEET_DATA}}</data>
 Make your tone concise and professional. Follow this structure:
 <formatting_example>{{Q1_REPORT}}</formatting_example>
 ```
-
 
 ## 一些常用的XML标签使用样例
 

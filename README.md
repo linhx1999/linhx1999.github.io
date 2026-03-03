@@ -178,6 +178,7 @@ This project includes a Keystatic-based web editor for writing blog posts locall
 5. Commit and push changes to publish (`main` branch).
 
 Notes:
+
 - The admin UI is routed from `/admin` to Keystatic's internal `/keystatic` route.
 - Production deployment sets `SKIP_KEYSTATIC=true`, so the admin UI is not exposed on GitHub Pages.
 
