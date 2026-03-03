@@ -134,6 +134,30 @@ const structuredData = {
   </head>
   <body>
     <slot />
+    <!-- Dify Chatbot -->
+    <script is:inline>
+      window.difyChatbotConfig = {
+        token: '7txU0wW8IpvzdqSD',
+        inputs: {},
+        systemVariables: {},
+        userVariables: {},
+      };
+    </script>
+    <script
+      is:inline
+      src="https://udify.app/embed.min.js"
+      id="7txU0wW8IpvzdqSD"
+      defer
+    ></script>
+    <style is:inline>
+      #dify-chatbot-bubble-button {
+        background-color: #1C64F2 !important;
+      }
+      #dify-chatbot-bubble-window {
+        width: 24rem !important;
+        height: 40rem !important;
+      }
+    </style>
   </body>
 </html>
 
