@@ -1,7 +1,7 @@
 ---
 title: Go Map 底层实现深度解析：Go 1.23 vs Go 1.24
 description: 深入对比 Go 1.23 和 Go 1.24 中 map 的底层实现差异，从传统链表哈希表到 Swiss Table 的变革
-draft: true
+draft: false
 featured: false
 tags:
   - go
