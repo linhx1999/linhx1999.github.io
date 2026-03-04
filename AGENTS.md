@@ -1,7 +1,10 @@
-# AGENTS.md - AstroPaper 编码规范
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 项目概述
-这是一个使用 TypeScript、Tailwind CSS v4 和 React JSX 的 Astro v5 博客项目（AstroPaper）。
+
+AstroPaper 博客项目，使用 Astro v5 + TypeScript + Tailwind CSS v4 + React JSX。
 
 ## 重要开发指南
 
@@ -12,131 +15,85 @@
 - 开发相关的更改（架构、命令、工作流、内部系统）→ 更新 `AGENTS.md`
 - 必须确保文档与代码库同步
 
-## 构建命令
+## 常用命令
 
 ```bash
-# 开发环境
-pnpm dev
-
-# 生产构建（包含类型检查、构建和 pagefind）
-pnpm build
-
-# 预览生产构建
-pnpm preview
-
-# 同步 Astro 类型
-pnpm sync
+pnpm dev          # 启动开发服务器 (localhost:4321)
+pnpm build        # 生产构建（含类型检查和 pagefind 搜索索引）
+pnpm preview      # 预览构建结果
+pnpm lint         # ESLint 检查
+pnpm format       # Prettier 格式化
+pnpm format:check # 检查格式化
 ```
 
-## 代码检查与格式化命令
+**注意**：项目未配置测试框架。
 
-```bash
-# 运行 ESLint
-pnpm lint
+## 核心架构
 
-# 检查格式化
-pnpm format:check
-
-# 修复格式化
-pnpm format
-```
-
-**注意：** 未配置测试框架，没有单独的测试命令。
-
-## 代码风格规范
-
-### TypeScript
-- **启用严格模式** - 继承 `astro/tsconfigs/strict`
-- 所有新文件使用 TypeScript
-- 为函数参数和返回值定义显式类型
-- 对象形状使用 `interface`，联合类型/复杂类型使用 `type`
-- 路径别名：`@/*` 映射到 `./src/*`
-
-### 导入规范
-- 使用 ES 模块（`"type": "module"`）
-- 分组导入顺序：外部库优先，然后是内部别名（`@/`），最后是相对路径
-- 示例：
-  ```typescript
-  import { defineConfig } from "astro/config";
-  import { SITE } from "@/config";
-  import { slugifyStr } from "./slugify";
-  ```
-
-### 格式化（Prettier）
-- Tab 宽度：2 个空格
-- 打印宽度：80 个字符
-- 分号：**必需**
-- 引号：**双引号**（`"`）
-- JSX 引号：双引号
-- 尾随逗号：**ES5 风格**（在有效位置）
-- 箭头函数括号：尽可能**避免**
-- 换行符：LF
-
-### 命名规范
-- 组件：PascalCase（例如：`Card.astro`、`PostDetails.astro`）
-- 工具函数：camelCase（例如：`slugify.ts`、`getPath.ts`）
-- 常量：UPPER_SNAKE_CASE 或使用 `as const` 的 camelCase
-- 接口/类型：PascalCase
-- Astro props 接口：命名为 `Props`
-
-### 文件结构
-- 组件：`src/components/*.astro`
-- 布局：`src/layouts/*.astro`
-- 页面：`src/pages/**/*.astro`（基于文件的路由）
-- 工具函数：`src/utils/*.ts`
-- 配置：`src/config.ts`
-- 常量：`src/constants.ts`
-- 资源：`src/assets/`
-- 样式：`src/styles/`
-
-### Astro 组件
-- 使用 frontmatter（`---`）编写 TypeScript 代码
-- 为组件 props 导出 `Props` 接口
-- 在顶部解构 `Astro.props`
-- 使用 React JSX 语法（`jsx: "react-jsx"`）
-- 使用 Tailwind 类进行样式设置
-
-### 错误处理与日志记录
-- **不允许使用 `console.log`** - ESLint 会报错
-- 提交前移除所有调试日志
-- 在需要的地方使用 try/catch 进行适当的错误处理
-
-### Tailwind CSS
-- 使用 Tailwind v4 工具类
-- 全局样式位于 `src/styles/global.css`
-- Prettier 插件会自动排序类名
+### 文件路由
+- `src/pages/**/*.astro` → 基于文件路径自动生成路由
+- 博客文章路由：`src/pages/posts/[...slug]/index.astro`
 
 ### 内容集合
-- 博客文章位于 `src/data/blog/`
-- 模式定义在 `src/content.config.ts`
-- 使用 Zod 进行类型验证
+- 博客文章位置：`src/data/blog/`
+- Schema 定义：`src/content.config.ts`（使用 Zod 验证）
+- 自定义 loader 会自动从文件系统获取 `pubDatetime` 和 `modDatetime`
 
-## 博客文章编写规范
+### 博客文章路径规则
+```
+src/data/blog/2025/article.md  → /posts/2025/article
+src/data/blog/article.md       → /posts/article
+src/data/blog/_dir/article.md  → /posts/article（下划线前缀不影响 URL）
+```
 
-参考 `src/data/blog/posts/example.md`：
+### 站点配置
+- 主配置：`src/config.ts`（站点信息、每页文章数、时区等）
+- Astro 配置：`astro.config.ts`
 
-## 环境变量
-- 在 `astro.config.ts` 中定义 env schema
-- 客户端变量使用 `PUBLIC_` 前缀
+## 代码规范
 
-## Git
-- 使用 pnpm（lockfile: `pnpm-lock.yaml`）
-- 不要提交 `dist/` 或 `.astro/`
+### TypeScript
+- 严格模式（继承 `astro/tsconfigs/strict`）
+- 路径别名：`@/*` → `./src/*`
+- 对象用 `interface`，联合类型用 `type`
 
-### Commit 规范
-- **使用中文**编写 commit 信息
-- 遵循约定式提交（Conventional Commits）规范
-- 格式：`<类型>(<作用域>): <描述>`
-- 常用类型：
-  - `feat`: 新功能
-  - `fix`: 修复
-  - `docs`: 文档
-  - `style`: 代码风格（格式化、缺失分号等，不影响代码逻辑）
-  - `refactor`: 重构（非 feat/fix 的代码更改）
-  - `perf`: 性能优化
-  - `test`: 测试
-  - `chore`: 构建过程或辅助工具变动
-- 示例：
-  - `feat(blog): 添加文章搜索功能`
-  - `fix(layout): 修复移动端导航栏重叠问题`
-  - `docs(readme): 更新安装说明`
+### 格式化（Prettier）
+- 双引号、分号必需、2空格缩进、80字符宽度
+- JSX 引号：双引号
+- 箭头函数括号：尽可能避免
+
+### 命名规范
+- 组件：PascalCase（`Card.astro`）
+- 工具函数：camelCase（`slugify.ts`）
+- Astro props 接口：命名为 `Props`
+
+### ESLint 规则
+- **禁止 `console.log`** - 提交前必须移除所有调试日志
+
+## 博客文章 Frontmatter
+
+```yaml
+---
+title: 文章标题（必填）
+description: 文章描述（可选，用于摘要和 SEO）
+pubDatetime: 2025-01-15T10:00:00Z  # 可选，默认为文件创建时间
+modDatetime: 2025-01-15T12:00:00Z  # 可选，默认为文件修改时间
+tags: [标签1, 标签2]
+featured: false  # 是否展示在首页
+draft: true      # 草稿状态，发布时改为 false
+---
+```
+
+### ASCII 图表规范
+在博客中使用代码块绘制 ASCII 图表时，**必须使用英文文字**，避免中英文混排导致的对齐问题。
+
+## Keystatic 编辑器
+
+本地可通过 `/admin` 访问 Keystatic 可视化编辑器（生产环境自动禁用）。
+
+## Git Commit 规范
+
+使用中文编写 commit 信息，遵循 Conventional Commits：
+- `feat(blog): 添加文章搜索功能`
+- `fix(layout): 修复移动端导航栏重叠问题`
+- `docs(readme): 更新安装说明`
