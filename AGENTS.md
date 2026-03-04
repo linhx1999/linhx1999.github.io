@@ -9,10 +9,10 @@ AstroPaper 博客项目，使用 Astro v5 + TypeScript + Tailwind CSS v4 + React
 ## 重要开发指南
 
 ### 文档更新政策
-**关键：每次代码更改后必须更新 README.md 和 AGENTS.md**
+**关键：每次代码更改后必须更新 README.md 和 CLAUDE.md**
 
 - 面向用户的更改（功能、设置、使用说明）→ 更新 `README.md`
-- 开发相关的更改（架构、命令、工作流、内部系统）→ 更新 `AGENTS.md`
+- 开发相关的更改（架构、命令、工作流、内部系统）→ 更新 `CLAUDE.md`
 - 必须确保文档与代码库同步
 
 ## 常用命令
