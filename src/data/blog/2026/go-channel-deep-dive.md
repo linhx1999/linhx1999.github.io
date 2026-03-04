@@ -75,9 +75,55 @@ func main() {
 
 Channel 通过将数据封装在消息中传递，实现了**隐式同步**：发送操作阻塞直到有接收者，接收操作阻塞直到有发送者。这种设计让并发程序的编写更接近顺序思维，大大降低了心智负担。
 
+### 1.2 CSP 并发模型
+
+Go 的并发设计深受 **CSP（Communicating Sequential Processes，通信顺序进程）** 模型的影响。理解 CSP 有助于我们更好地理解 Go channel 的设计哲学。
+
+**什么是 CSP？**
+
+CSP 是由 **Tony Hoare**（快速排序算法的发明者、图灵奖得主）于 1978 年提出的一种并发编程理论模型。它的核心思想是：
+
+```
+┌─────────────┐            ┌─────────────┐
+│  Process A  │ ─────────> │  Process B  │
+│(Sequential) │  Channel   │(Sequential) │
+└─────────────┘            └─────────────┘
+
+不共享内存，通过消息传递来通信
+```
+
+**两大核心概念**：
+
+| 概念 | 说明 |
+|------|------|
+| **Process（进程/协程）** | 独立的执行单元，内部顺序执行，不直接共享状态 |
+| **Channel（通道）** | 进程间通信的唯一方式，负责消息传递和同步 |
+
+**Go 语言中的实现**
+
+Go 语言将 CSP 模型落地为两个核心原语：
+
+```go
+// 1. goroutine - 轻量级进程（对应 CSP 中的 Process）
+go doSomething()
+
+// 2. channel - 通信通道（对应 CSP 中的 Channel）
+ch := make(chan int)
+ch <- value   // 发送
+value := <-ch // 接收
+```
+
+Go 的并发哲学可以概括为：
+
+> Do not communicate by sharing memory; instead, share memory by communicating.
+>
+> 不要通过共享内存来通信，而要通过通信来共享内存。
+
+Go 语言是 CSP 模型最成功的工业级实现之一，它将学术理论转化为实用的编程工具，让并发编程变得更加安全和高效。
+
 本文将深入 Go 1.24 版本 runtime 源码，从 `hchan` 数据结构出发，剖析 channel 的创建、发送、接收和关闭等核心操作的底层实现机制，理解这一优雅设计背后的工程细节。
 
-### 1.2 Channel 基本用法
+### 1.3 Channel 基本用法
 
 在深入源码之前，先回顾 channel 的基本使用方式：
 
@@ -163,7 +209,7 @@ func consumer(ch <-chan int) {
 }
 ```
 
-### 1.3 通道状态与边界情况
+### 1.4 通道状态与边界情况
 
 理解 channel 在各种边界情况下的行为对于编写正确的并发程序至关重要：
 
@@ -193,7 +239,7 @@ v4, ok4 := <-ch  // v4 = 0, ok4 = false（始终返回零值）
 
 **关键结论**：
 
-- `ok == false` **仅且一定**表示"通道已关闭且无数据"
+- `ok == false` **仅且一定**表示“通道已关闭且无数据”
 - 通道关闭后，缓冲区内剩余数据仍然可以正常接收
 - 重复从已关闭的空通道接收，会立即返回零值（非阻塞）
 
@@ -289,7 +335,54 @@ func isClosed(ch <-chan int) bool {
 
 **注意**：不要依赖 `isClosed` 函数进行业务逻辑判断，这本身就是竞态条件。正确做法是使用 `for range` 或带 `ok` 的接收，让通道关闭自然传播。
 
-### 1.4 Select 多路复用的选择机制
+```go
+// ❌ 错误用法：isClosed 检查与后续操作之间存在竞态
+func processWrong(ch <-chan int) {
+    if !isClosed(ch) {        // 时刻 T1：检查通道未关闭
+        // ... 其他 goroutine 可能在此时关闭通道 ...
+        value := <-ch         // 时刻 T2：可能从已关闭通道读取，或阻塞
+        // 如果通道在 T1-T2 之间被关闭，这里的逻辑就出错了
+    }
+}
+
+// ✅ 正确用法 1：使用 for range 自动处理关闭
+func processRange(ch <-chan int) {
+    for value := range ch {  // 通道关闭时自动退出循环
+        fmt.Println("处理:", value)
+    }
+    fmt.Println("通道已关闭，正常退出")
+}
+
+// ✅ 正确用法 2：使用 ok 值判断
+func processOK(ch <-chan int) {
+    for {
+        value, ok := <-ch
+        if !ok {
+            fmt.Println("通道已关闭，正常退出")
+            return
+        }
+        fmt.Println("处理:", value)
+    }
+}
+```
+
+**竞态条件分析**：
+
+```
+时间线：
+┌─────────────────────────────────────────────────────────────┐
+│ Goroutine A (Consumer)        │ Goroutine B (Producer)      │
+├───────────────────────────────┼─────────────────────────────┤
+│ isClosed(ch) → false          │                             │
+│                               │ close(ch)  ← close channel  │
+│ value := <-ch                 │                             │
+│ (zero value, logic error!)    │                             │
+└───────────────────────────────┴─────────────────────────────┘
+```
+
+**核心原理**：Go 的内置操作（`<-ch`、`for range`）将**判断状态**和**获取数据**合并为**一个原子操作**，从而避免了竞态条件。而 `isClosed` 函数将这两个步骤分离，中间存在时间窗口，导致竞态。
+
+### 1.5 Select 多路复用的选择机制
 
 `select` 语句是 Go 并发编程的强大工具，它可以同时监听多个 channel 的操作。理解其选择机制对于编写正确的并发程序至关重要。
 
@@ -433,7 +526,117 @@ case v := <-ch2:  // 这个 case 永远不会就绪
 // 只会执行 ch1 的分支，ch2 的分支被忽略
 ```
 
-这在动态启用/禁用某个通道时非常有用。
+**动态启用/禁用通道示例**
+
+通过将 channel 设为 `nil` 可以在运行时动态控制 `select` 中的分支：
+
+```go
+func dynamicSelect() {
+    ch1 := make(chan int)
+    ch2 := make(chan int)
+
+    // 控制开关
+    enableCh1 := true
+    enableCh2 := true
+
+    go func() {
+        ch1 <- 1
+        ch2 <- 2
+    }()
+
+    for i := 0; i < 4; i++ {
+        // 动态获取当前启用的通道
+        c1 := ch1
+        c2 := ch2
+
+        if !enableCh1 {
+            c1 = nil  // 禁用 ch1
+        }
+        if !enableCh2 {
+            c2 = nil  // 禁用 ch2
+        }
+
+        select {
+        case v := <-c1:
+            fmt.Println("from ch1:", v)
+            enableCh1 = false  // 收到后禁用 ch1
+        case v := <-c2:
+            fmt.Println("from ch2:", v)
+            enableCh2 = false  // 收到后禁用 ch2
+        case <-time.After(100 * time.Millisecond):
+            fmt.Println("timeout")
+            return
+        }
+    }
+}
+// 输出顺序可能是：
+// from ch1: 1  (然后 ch1 被禁用)
+// from ch2: 2  (然后 ch2 被禁用)
+// timeout     (两个通道都被禁用，无数据可读)
+```
+
+**实际应用场景**：多个生产者完成后逐个禁用
+
+```go
+func multiProducer() {
+    ch1 := make(chan string)
+    ch2 := make(chan string)
+    ch3 := make(chan string)
+
+    // 启动 3 个生产者
+    go func() {
+        ch1 <- "task-1"
+        close(ch1)  // 生产完成后关闭
+    }()
+    go func() {
+        ch2 <- "task-2"
+        close(ch2)
+    }()
+    go func() {
+        ch3 <- "task-3"
+        close(ch3)
+    }()
+
+    // 动态管理活跃通道
+    active := map[string]<-chan string{
+        "ch1": ch1,
+        "ch2": ch2,
+        "ch3": ch3,
+    }
+
+    for len(active) > 0 {
+        // 每次循环重建 select 分支
+        c1, c2, c3 := active["ch1"], active["ch2"], active["ch3"]
+
+        select {
+        case v, ok := <-c1:
+            if !ok {
+                delete(active, "ch1")  // ch1 关闭，从活跃列表移除
+                fmt.Println("ch1 closed")
+            } else {
+                fmt.Println("ch1:", v)
+            }
+        case v, ok := <-c2:
+            if !ok {
+                delete(active, "ch2")
+                fmt.Println("ch2 closed")
+            } else {
+                fmt.Println("ch2:", v)
+            }
+        case v, ok := <-c3:
+            if !ok {
+                delete(active, "ch3")
+                fmt.Println("ch3 closed")
+            } else {
+                fmt.Println("ch3:", v)
+            }
+        }
+    }
+    fmt.Println("all producers done")
+}
+```
+
+**核心原理**：`nil` channel 在 `select` 中永远不会被选中（相当于被"禁用"），利用这一特性可以在运行时动态控制哪些通道参与调度。
 
 **Select 与关闭的通道**
 
@@ -503,19 +706,19 @@ Channel 的底层实现围绕 `hchan` 结构体展开，定义在 `src/runtime/c
 
 ```go
 type hchan struct {
-    qcount   uint           // 当前缓冲区中元素数量
-    dataqsiz uint           // 缓冲区容量（环形队列大小）
-    buf      unsafe.Pointer // 指向环形队列的指针
-    elemsize uint16         // 单个元素大小
-    closed   uint32         // 关闭标志（0=开放，1=关闭）
-    timer    *timer          // 用于 time.After 等定时器 channel
-    elemtype *_type          // 元素类型元数据
-    sendx    uint            // 发送索引（x = index）
-    recvx    uint            // 接收索引（x = index）
-    recvq    waitq           // 接收等待队列
-    sendq    waitq           // 发送等待队列
-    bubble   *synctestBubble // 用于同步测试框架
-    lock     mutex           // 互斥锁，保护所有字段
+    qcount   uint               // 当前缓冲区中元素数量
+    dataqsiz uint               // 缓冲区容量（环形队列大小）
+    buf      unsafe.Pointer     // 指向环形队列的指针
+    elemsize uint16             // 单个元素大小
+    closed   uint32             // 关闭标志（0=开放，1=关闭）
+    timer    *timer             // 用于 time.After 等定时器 channel
+    elemtype *_type             // 元素类型元数据
+    sendx    uint               // 发送索引（x = index）
+    recvx    uint               // 接收索引（x = index）
+    recvq    waitq              // 接收等待队列
+    sendq    waitq              // 发送等待队列
+    bubble   *synctestBubble    // 用于同步测试框架
+    lock     mutex              // 互斥锁，保护所有字段
 }
 ```
 
@@ -539,7 +742,7 @@ type waitq struct {
 }
 ```
 
-`waitq` 是一个双向链表，存储等待在该 channel 上的 goroutine。`sudog`（pseudo-goroutine）是用于表示等待队列中节点的结构，它包装了 goroutine 及其相关上下文信息。
+`waitq` 是一个双向链表，存储等待在该 channel 上的 goroutine。`sudog`（pseudo-goroutine，伪 goroutine）是用于表示等待队列中节点的结构，它包装了 goroutine 及其相关上下文信息。
 
 ### 2.3 环形缓冲区内存布局
 
@@ -619,7 +822,42 @@ func makechan(t *chantype, size int) *hchan {
 
 ## 4 发送操作：chansend
 
-发送操作 `ch <- v` 编译后调用 `chansend1`，最终进入 `chansend` 函数：
+发送操作 `ch <- v` 编译后调用 `chansend1`，最终进入 `chansend` 函数。函数签名如下：
+
+```go
+func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool
+```
+
+**参数说明**：
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `c` | `*hchan` | 目标 channel |
+| `ep` | `unsafe.Pointer` | 待发送数据的指针 |
+| `block` | `bool` | 是否阻塞模式 |
+| `callerpc` | `uintptr` | 调用者 PC，用于调试追踪 |
+
+**block 参数详解**：
+
+| `block` 值 | 触发场景 | 行为 |
+|------------|----------|------|
+| `true` | 普通发送 `ch <- v` | 无法发送时阻塞等待 |
+| `false` | `select` 的非阻塞分支 | 无法发送时立即返回 `false` |
+
+```go
+// block=true 的场景
+ch <- 42  // 编译为 chansend1 → chansend(c, ep, true, callerpc)
+
+// block=false 的场景
+select {
+case ch <- 42:  // 编译为 chansend(c, ep, false, callerpc)
+    // 发送成功
+default:
+    // 发送失败（block=false 返回 false）
+}
+```
+
+**函数实现**：
 
 ```go
 func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
@@ -1091,6 +1329,32 @@ goready(gp, skip)
 
 ### 7.3 栈收缩保护
 
+**什么是栈收缩？**
+
+Go 的 goroutine 栈是动态增长的，初始大小只有 2KB。当栈空间不足时，运行时会分配更大的栈（通常是原来的 2 倍），并将旧栈的内容拷贝到新栈。但 Go 也会进行**栈收缩（Stack Shrinking）**：当发现栈的使用率很低时，运行时会分配一个更小的栈，将数据拷贝过去，释放原来较大的栈。
+
+```
+┌───────────────────────────────────────────────────────────────────────────┐
+│                    Goroutine Stack Lifecycle                              │
+├───────────────────────────────────────────────────────────────────────────┤
+│                                                                           │
+│  Initial 2KB      Deep Calls          After Return            GC Cycle    │
+│      ↓                ↓                    ↓                      ↓       │
+│  ┌───────┐       ┌──────────┐         ┌──────────┐            ┌───────┐   │
+│  │  2KB  │─grow─>│   8KB    │─keep──> │   8KB    │──shrink──> │  4KB  │   │
+│  └───────┘       │ (2x grow)│         │ (use 1KB)│            └───────┘   │
+│                  └──────────┘         └──────────┘                        │
+│                                                                           │
+│  Grow: calls/locals overflow         Shrink: GC finds usage < 1/4         │
+└───────────────────────────────────────────────────────────────────────────┘
+```
+
+栈收缩通常在 GC 的标记阶段进行，条件是栈的使用量小于当前栈大小的 1/4。
+
+**栈收缩带来的挑战**
+
+当 goroutine 阻塞在 channel 操作上时，它的栈可能被其他 goroutine 引用（通过 `sudog.elem` 指针）。如果此时发生栈收缩，需要特殊处理来保证指针的正确性。
+
 Channel 操作涉及跨 goroutine 的栈引用，需要特殊处理栈收缩：
 
 ```go
@@ -1233,4 +1497,3 @@ Go Channel 的实现是一个精妙的工程设计：
 2. [Go 1.24 Source: src/runtime/runtime2.go](https://github.com/golang/go/blob/master/src/runtime/runtime2.go) - goroutine 和 sudog 定义
 3. [Go 1.24 Source: src/runtime/proc.go](https://github.com/golang/go/blob/master/src/runtime/proc.go) - 调度器实现
 4. [Go Memory Model](https://go.dev/ref/mem) - Go 内存模型规范
-5. [Go Channels Discussion by Dmitry Vyukov](https://docs.google.com/document/d/1yIAYmbvL3JxQQOAIcJhIHDayS2NdbFzQGIDkJtJq3H4) - Channel 设计文档
