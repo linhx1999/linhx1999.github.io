@@ -15,6 +15,8 @@ tags:
 hideEditPost: false
 ---
 
+## TOC
+
 ## 1 引言
 
 Channel 是 Go 语言并发编程的核心原语，它提供了一种类型安全、优雅的方式来实现 goroutine 之间的通信与同步。不同于共享内存加锁的传统并发模式，Go 倡导通过 channel 进行通信（"Don't communicate by sharing memory, share memory by communicating"）。
