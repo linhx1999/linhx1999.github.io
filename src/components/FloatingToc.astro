@@ -1,0 +1,135 @@
+---
+import type { MarkdownHeading } from "astro";
+import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
+import IconX from "@/assets/icons/IconX.svg";
+
+interface TocHeading {
+  depth: 2 | 3;
+  slug: string;
+  text: string;
+}
+
+export interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+
+const tocHeadings = headings
+  .filter(
+    (heading): heading is MarkdownHeading & { depth: 2 | 3 } =>
+      (heading.depth === 2 || heading.depth === 3) &&
+      heading.slug !== "toc" &&
+      heading.text.trim().toLowerCase() !== "toc"
+  )
+  .map(
+    heading =>
+      ({
+        depth: heading.depth,
+        slug: heading.slug,
+        text: heading.text,
+      }) satisfies TocHeading
+  );
+
+const shouldRender = tocHeadings.length >= 2;
+---
+
+{
+  shouldRender && (
+    <>
+      <button
+        id="toc-mobile-trigger"
+        type="button"
+        aria-expanded="false"
+        aria-controls="toc-mobile-panel"
+        data-pagefind-ignore
+        class:list={[
+          "fixed end-4 top-20 z-40 inline-flex items-center gap-2 rounded-full border border-border bg-background/90 px-3 py-2 text-sm shadow-lg backdrop-blur-lg transition hover:text-accent xl:hidden",
+        ]}
+      >
+        <IconMenuDeep class="size-4" />
+        <span>目录</span>
+      </button>
+
+      <div
+        id="toc-mobile-backdrop"
+        data-pagefind-ignore
+        class="pointer-events-none fixed inset-0 z-40 bg-background/60 opacity-0 transition xl:hidden"
+        hidden
+      />
+
+      <aside
+        id="toc-mobile-panel"
+        aria-label="文章目录"
+        aria-hidden="true"
+        data-pagefind-ignore
+        class:list={[
+          "fixed end-0 top-0 z-50 flex h-svh w-[min(20rem,85vw)] translate-x-full flex-col border-s border-border bg-background/95 p-5 shadow-2xl backdrop-blur-xl transition-transform xl:hidden",
+        ]}
+      >
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <p class="text-sm font-bold tracking-[0.2em] text-accent uppercase">
+            On This Page
+          </p>
+          <button
+            id="toc-mobile-close"
+            type="button"
+            class="rounded-full border border-border p-2 transition hover:text-accent"
+          >
+            <span class="sr-only">关闭目录</span>
+            <IconX class="size-4" />
+          </button>
+        </div>
+
+        <nav class="min-h-0 flex-1 overflow-y-auto" aria-label="移动端文章目录">
+          <ol class="space-y-1.5">
+            {tocHeadings.map(({ slug, text, depth }) => (
+              <li>
+                <a
+                  href={`#${slug}`}
+                  data-toc-link
+                  data-slug={slug}
+                  class:list={[
+                    "block rounded-md border-s-2 border-transparent px-3 py-2 text-sm text-foreground/70 transition hover:border-accent/50 hover:text-accent",
+                    depth === 3 ? "ms-4 text-[0.92rem]" : "font-medium",
+                  ]}
+                >
+                  {text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </aside>
+
+      <aside
+        class="sticky top-24 hidden self-start xl:block xl:w-72 xl:flex-none"
+        aria-label="文章目录"
+        data-pagefind-ignore
+      >
+        <nav class="rounded-2xl border border-border bg-background/75 p-5 shadow-lg backdrop-blur-lg">
+          <p class="mb-4 text-xs font-bold tracking-[0.24em] text-accent uppercase">
+            On This Page
+          </p>
+          <ol class="max-h-[calc(100vh-9rem)] space-y-1.5 overflow-y-auto pe-2">
+            {tocHeadings.map(({ slug, text, depth }) => (
+              <li>
+                <a
+                  href={`#${slug}`}
+                  data-toc-link
+                  data-slug={slug}
+                  class:list={[
+                    "block rounded-md border-s-2 border-transparent px-3 py-2 text-sm text-foreground/70 transition hover:border-accent/50 hover:text-accent",
+                    depth === 3 ? "ms-4 text-[0.92rem]" : "font-medium",
+                  ]}
+                >
+                  {text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </aside>
+    </>
+  )
+}

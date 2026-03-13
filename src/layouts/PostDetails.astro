@@ -9,6 +9,7 @@ import EditPost from "@/components/EditPost.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
+import FloatingToc from "@/components/FloatingToc.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
@@ -35,7 +36,7 @@ const {
   hideEditPost,
 } = post.data;
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 
 let ogImageUrl: string | undefined;
 
@@ -89,84 +90,121 @@ const nextPost =
     id="main-content"
     class:list={[
       "mx-auto w-full max-w-app px-4 pb-12",
+      "xl:max-w-[min(100%,80rem)]",
       { "mt-8": !SITE.showBackButton },
     ]}
     data-pagefind-body
   >
-    <h1
-      transition:name={slugifyStr(title)}
-      class="inline-block text-2xl font-bold text-accent sm:text-3xl"
-    >
-      {title}
-    </h1>
-    <div class="my-2 flex items-center gap-2">
-      <Datetime pubDatetime={pubDatetime!} {modDatetime} {timezone} size="lg" />
-      <span
-        aria-hidden="true"
-        class:list={[
-          "max-sm:hidden",
-          { hidden: !SITE.editPost.enabled || hideEditPost },
-        ]}>|</span
-      >
-      <EditPost {hideEditPost} {post} class="max-sm:hidden" />
-    </div>
-    <article
-      id="article"
-      class="app-prose mx-auto mt-8 max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
-    >
-      <Content />
-    </article>
-
-    <hr class="my-8 border-dashed" />
-
-    <EditPost class="sm:hidden" {hideEditPost} {post} />
-
-    <ul class="mt-4 mb-8 sm:my-8">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} />)}
-    </ul>
-
-    <BackToTopButton />
-
-    <ShareLinks />
-
-    <hr class="my-6 border-dashed" />
-
-    <!-- Previous/Next Post Buttons -->
-    <div data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      {
-        prevPost && (
-          <a
-            href={getPath(prevPost.id, prevPost.filePath)}
-            class="flex w-full gap-1 hover:opacity-75"
+    <div class="xl:flex xl:items-start xl:gap-10">
+      <div class="min-w-0 flex-1">
+        <h1
+          transition:name={slugifyStr(title)}
+          class="inline-block text-2xl font-bold text-accent sm:text-3xl"
+        >
+          {title}
+        </h1>
+        <div class="my-2 flex items-center gap-2">
+          <Datetime
+            pubDatetime={pubDatetime!}
+            {modDatetime}
+            {timezone}
+            size="lg"
+          />
+          <span
+            aria-hidden="true"
+            class:list={[
+              "max-sm:hidden",
+              { hidden: !SITE.editPost.enabled || hideEditPost },
+            ]}>|</span
           >
-            <IconChevronLeft class="inline-block flex-none rtl:rotate-180" />
-            <div>
-              <span>Previous Post</span>
-              <div class="text-sm text-accent/85">{prevPost.title}</div>
-            </div>
-          </a>
-        )
-      }
-      {
-        nextPost && (
-          <a
-            href={getPath(nextPost.id, nextPost.filePath)}
-            class="flex w-full justify-end gap-1 text-end hover:opacity-75 sm:col-start-2"
-          >
-            <div>
-              <span>Next Post</span>
-              <div class="text-sm text-accent/85">{nextPost.title}</div>
-            </div>
-            <IconChevronRight class="inline-block flex-none rtl:rotate-180" />
-          </a>
-        )
-      }
+          <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+        </div>
+        <article
+          id="article"
+          class="app-prose mx-auto mt-8 max-w-app xl:mx-0 xl:max-w-none prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
+        >
+          <Content />
+        </article>
+
+        <hr class="my-8 border-dashed" />
+
+        <EditPost class="sm:hidden" {hideEditPost} {post} />
+
+        <ul class="mt-4 mb-8 sm:my-8">
+          {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} />)}
+        </ul>
+
+        <BackToTopButton />
+
+        <ShareLinks />
+
+        <hr class="my-6 border-dashed" />
+
+        <!-- Previous/Next Post Buttons -->
+        <div data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {
+            prevPost && (
+              <a
+                href={getPath(prevPost.id, prevPost.filePath)}
+                class="flex w-full gap-1 hover:opacity-75"
+              >
+                <IconChevronLeft class="inline-block flex-none rtl:rotate-180" />
+                <div>
+                  <span>Previous Post</span>
+                  <div class="text-sm text-accent/85">{prevPost.title}</div>
+                </div>
+              </a>
+            )
+          }
+          {
+            nextPost && (
+              <a
+                href={getPath(nextPost.id, nextPost.filePath)}
+                class="flex w-full justify-end gap-1 text-end hover:opacity-75 sm:col-start-2"
+              >
+                <div>
+                  <span>Next Post</span>
+                  <div class="text-sm text-accent/85">{nextPost.title}</div>
+                </div>
+                <IconChevronRight class="inline-block flex-none rtl:rotate-180" />
+              </a>
+            )
+          }
+        </div>
+      </div>
+
+      <FloatingToc {headings} />
     </div>
   </main>
   <Footer />
 </Layout>
 
 <script is:inline data-astro-rerun>
+  function hideLegacyTableOfContents() {
+    const article = document.querySelector("#article");
+    if (!article) return;
+
+    const headings = Array.from(article.querySelectorAll("h2, h3, h4, h5, h6"));
+    const tocHeading = headings.find(heading => heading.id === "toc");
+    if (!tocHeading) return;
+
+    let sibling = tocHeading.nextElementSibling;
+    let tocContainer = null;
+    while (sibling) {
+      if (sibling.querySelector("details > summary")) {
+        tocContainer = sibling;
+        break;
+      }
+      if (/^H[2-6]$/.test(sibling.tagName)) {
+        break;
+      }
+      sibling = sibling.nextElementSibling;
+    }
+
+    tocHeading.remove();
+    tocContainer?.remove();
+  }
+
   /** Create a progress indicator
    *  at the top */
   function createProgressBar() {
@@ -208,6 +246,131 @@ const nextPost =
   }
   updateScrollProgress();
 
+  function setupFloatingToc() {
+    const panel = document.querySelector("#toc-mobile-panel");
+    const trigger = document.querySelector("#toc-mobile-trigger");
+    const closeButton = document.querySelector("#toc-mobile-close");
+    const backdrop = document.querySelector("#toc-mobile-backdrop");
+    const links = Array.from(document.querySelectorAll("[data-toc-link]"));
+
+    if (!panel || !trigger || !closeButton || !backdrop || links.length === 0) {
+      return;
+    }
+
+    const openClasses = {
+      panel: ["translate-x-0"],
+      backdrop: ["opacity-100"],
+      trigger: ["opacity-0", "pointer-events-none"],
+    };
+
+    const closeClasses = {
+      panel: ["translate-x-full"],
+      backdrop: ["opacity-0"],
+      trigger: ["opacity-100", "pointer-events-auto"],
+    };
+
+    const setMobileTocOpen = isOpen => {
+      panel.setAttribute("aria-hidden", String(!isOpen));
+      trigger.setAttribute("aria-expanded", String(isOpen));
+      backdrop.toggleAttribute("hidden", !isOpen);
+      backdrop.classList.toggle("pointer-events-none", !isOpen);
+
+      for (const className of openClasses.panel) {
+        panel.classList.toggle(className, isOpen);
+      }
+      for (const className of closeClasses.panel) {
+        panel.classList.toggle(className, !isOpen);
+      }
+      for (const className of openClasses.backdrop) {
+        backdrop.classList.toggle(className, isOpen);
+      }
+      for (const className of closeClasses.backdrop) {
+        backdrop.classList.toggle(className, !isOpen);
+      }
+      for (const className of openClasses.trigger) {
+        trigger.classList.toggle(className, isOpen);
+      }
+      for (const className of closeClasses.trigger) {
+        trigger.classList.toggle(className, !isOpen);
+      }
+      document.body.classList.toggle("overflow-hidden", isOpen);
+    };
+
+    setMobileTocOpen(false);
+
+    trigger.addEventListener("click", () => setMobileTocOpen(true));
+    closeButton.addEventListener("click", () => setMobileTocOpen(false));
+    backdrop.addEventListener("click", () => setMobileTocOpen(false));
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        setMobileTocOpen(false);
+      }
+    });
+
+    for (const link of links) {
+      link.addEventListener("click", () => setMobileTocOpen(false));
+    }
+
+    const headingElements = links
+      .map(link => {
+        const slug = link.getAttribute("data-slug");
+        if (!slug) return null;
+        const heading = document.getElementById(slug);
+        if (!heading) return null;
+        return { slug, heading };
+      })
+      .filter(Boolean);
+
+    if (headingElements.length === 0) {
+      return;
+    }
+
+    const setActiveSlug = slug => {
+      for (const link of links) {
+        const isActive = link.getAttribute("data-slug") === slug;
+        link.classList.toggle("border-accent", isActive);
+        link.classList.toggle("bg-accent/10", isActive);
+        link.classList.toggle("text-accent", isActive);
+        link.classList.toggle("text-foreground/70", !isActive);
+      }
+    };
+
+    setActiveSlug(headingElements[0].slug);
+
+    const observer = new IntersectionObserver(
+      entries => {
+        const visibleEntries = entries
+          .filter(entry => entry.isIntersecting)
+          .sort(
+            (first, second) =>
+              first.boundingClientRect.top - second.boundingClientRect.top
+          );
+
+        if (visibleEntries.length > 0) {
+          setActiveSlug(visibleEntries[0].target.id);
+          return;
+        }
+
+        const passedHeadings = headingElements.filter(
+          ({ heading }) => heading.getBoundingClientRect().top < 160
+        );
+
+        if (passedHeadings.length > 0) {
+          setActiveSlug(passedHeadings[passedHeadings.length - 1].slug);
+        }
+      },
+      {
+        rootMargin: "-20% 0px -65% 0px",
+        threshold: [0, 1],
+      }
+    );
+
+    for (const { heading } of headingElements) {
+      observer.observe(heading);
+    }
+  }
+
   /** Attaches links to headings in the document,
    *  allowing sharing of sections easily */
   function addHeadingLinks() {
@@ -215,6 +378,7 @@ const nextPost =
       document.querySelectorAll("h2, h3, h4, h5, h6")
     );
     for (const heading of headings) {
+      if (heading.id === "toc") continue;
       heading.classList.add("group");
       const link = document.createElement("a");
       link.className =
@@ -228,7 +392,9 @@ const nextPost =
       heading.appendChild(link);
     }
   }
+  hideLegacyTableOfContents();
   addHeadingLinks();
+  setupFloatingToc();
 
   /** Attaches copy buttons to code blocks in the document,
    * allowing users to copy code easily. */
