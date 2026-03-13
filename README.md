@@ -85,6 +85,7 @@ src/data/blog/2026/go-channel-deep-dive.md
 ```text
 src/data/blog/2026/http-to-quic-primer.md
 src/data/blog/2026/mcp-streamable-http.md
+src/data/blog/2026/tcp-core-concepts.md
 ```
 
 对应访问路径通常为：
