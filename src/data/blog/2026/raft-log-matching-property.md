@@ -1,6 +1,7 @@
 ---
-title: Raft 为什么能保证同任期同索引的日志内容一定相同？ 
+title: Raft 为什么能保证同任期同索引的日志内容一定相同？
 description: 详解 Raft 算法中最核心的安全性保证之一——日志匹配特性（Log Matching Property），探讨选举安全性、Leader 日志创建规则与日志复制一致性检查
+pubDatetime: 2026-03-07T09:45:26+08:00
 draft: false
 featured: false
 tags:

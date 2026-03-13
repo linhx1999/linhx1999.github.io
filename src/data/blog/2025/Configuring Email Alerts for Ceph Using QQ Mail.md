@@ -1,6 +1,7 @@
 ---
 title: 配置ceph的邮箱报警功能(以QQ邮箱为例)
 pubDatetime: 2025-08-08
+modDatetime: 2026-03-03T10:42:49+08:00
 draft: false
 tags:
   - ceph

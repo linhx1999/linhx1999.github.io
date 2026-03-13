@@ -1,6 +1,7 @@
 ---
 title: 如何配置跳板机以实现安全的内网穿透
 pubDatetime: 2025-10-09
+modDatetime: 2026-03-03T10:42:49+08:00
 draft: false
 tags:
   - Linux

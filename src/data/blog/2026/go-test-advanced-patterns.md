@@ -1,6 +1,7 @@
 ---
 title: Go Test 进阶实战：从 MIT 6.824 Raft 实验学到的测试技巧
 description: 通过分析 MIT 6.824 分布式系统课程的 Raft 实验测试代码，深入学习 Go 测试的高级模式，包括资源清理、并发测试、原子操作、重试机制等实战技巧
+pubDatetime: 2026-03-04T13:16:59+08:00
 draft: false
 featured: false
 tags:
@@ -64,6 +65,7 @@ func TestInitialElection2A(t *testing.T) {
 ```
 
 关键点：
+
 - 参数必须是 `t *testing.T`
 - 使用 `t.Errorf()` / `t.Fatalf()` 报告失败
 - `Fatalf` 会立即终止当前测试，`Errorf` 会继续执行
@@ -98,12 +100,12 @@ func TestWithCleanup(t *testing.T) {
 
 两者的区别：
 
-| 特性 | `defer` | `t.Cleanup()` |
-|------|---------|---------------|
-| 执行时机 | 函数返回时 | 测试及其子测试完成后 |
-| 子测试支持 | 每个子测试需要单独 defer | 自动处理子测试清理 |
-| 执行顺序 | LIFO（后进先出） | 注册顺序 |
-| 适用场景 | 简单资源清理 | 复杂测试层次结构 |
+| 特性       | `defer`                  | `t.Cleanup()`        |
+| ---------- | ------------------------ | -------------------- |
+| 执行时机   | 函数返回时               | 测试及其子测试完成后 |
+| 子测试支持 | 每个子测试需要单独 defer | 自动处理子测试清理   |
+| 执行顺序   | LIFO（后进先出）         | 注册顺序             |
+| 适用场景   | 简单资源清理             | 复杂测试层次结构     |
 
 MIT 6.824 选择 `defer` 是因为测试结构相对简单，且 `defer` 更直观。
 
@@ -197,6 +199,7 @@ func TestConcurrentStarts2B(t *testing.T) {
 ```
 
 关键点：
+
 - `wg.Add(1)` 在启动 goroutine 前调用
 - `defer wg.Done()` 确保完成时通知
 - `wg.Wait()` 阻塞等待所有 goroutine 完成
@@ -305,6 +308,7 @@ for {
 ```
 
 `atomic` 的优势：
+
 - 更轻量，无需 channel 开销
 - 不需要在循环中使用 select
 - 语义更清晰：简单的布尔标志
@@ -508,13 +512,13 @@ for _, to := range []int{10, 20, 50, 100, 200} {
 
 ### 11.1 核心模式速查
 
-| 模式 | 用途 | 示例 |
-|------|------|------|
-| `defer cfg.cleanup()` | 资源清理 | 确保测试环境恢复 |
-| `sync.WaitGroup` | 并发协调 | 等待多个 goroutine |
-| `atomic.LoadInt32` | 状态控制 | 安全停止 goroutine |
-| `labeled continue` | 跳转控制 | 嵌套循环重试 |
-| 渐进式等待 | 超时处理 | 指数退避 |
+| 模式                  | 用途     | 示例               |
+| --------------------- | -------- | ------------------ |
+| `defer cfg.cleanup()` | 资源清理 | 确保测试环境恢复   |
+| `sync.WaitGroup`      | 并发协调 | 等待多个 goroutine |
+| `atomic.LoadInt32`    | 状态控制 | 安全停止 goroutine |
+| `labeled continue`    | 跳转控制 | 嵌套循环重试       |
+| 渐进式等待            | 超时处理 | 指数退避           |
 
 ### 11.2 最佳实践
 
@@ -722,6 +726,7 @@ func ExampleAdd_noCheck() {
 ```
 
 示例测试规则：
+
 - 函数名必须以 `Example` 开头
 - `// Output:` 注释指定期望输出
 - 输出必须完全匹配（包括换行）
@@ -769,22 +774,22 @@ go test -coverpkg=./pkg/... -coverprofile=coverage.out ./...
 
 ### 12.8 常用命令行标志
 
-| 标志 | 说明 | 示例 |
-|------|------|------|
-| `-v` | 详细输出 | `go test -v` |
-| `-run regex` | 运行匹配的测试 | `go test -run TestAdd` |
-| `-bench regex` | 运行基准测试 | `go test -bench=.` |
-| `-benchmem` | 显示内存分配 | `go test -bench=. -benchmem` |
-| `-cover` | 启用覆盖率 | `go test -cover` |
-| `-coverprofile` | 覆盖率文件 | `go test -coverprofile=c.out` |
-| `-race` | 竞态检测 | `go test -race` |
-| `-short` | 跳过耗时测试 | `go test -short` |
-| `-timeout` | 超时时间 | `go test -timeout 5m` |
-| `-count N` | 重复运行 | `go test -count=100` |
-| `-cpu` | 指定 CPU 数 | `go test -cpu=1,2,4` |
-| `-parallel N` | 并行数 | `go test -parallel=4` |
-| `-failfast` | 首次失败后停止 | `go test -failfast` |
-| `-json` | JSON 格式输出 | `go test -json` |
+| 标志            | 说明           | 示例                          |
+| --------------- | -------------- | ----------------------------- |
+| `-v`            | 详细输出       | `go test -v`                  |
+| `-run regex`    | 运行匹配的测试 | `go test -run TestAdd`        |
+| `-bench regex`  | 运行基准测试   | `go test -bench=.`            |
+| `-benchmem`     | 显示内存分配   | `go test -bench=. -benchmem`  |
+| `-cover`        | 启用覆盖率     | `go test -cover`              |
+| `-coverprofile` | 覆盖率文件     | `go test -coverprofile=c.out` |
+| `-race`         | 竞态检测       | `go test -race`               |
+| `-short`        | 跳过耗时测试   | `go test -short`              |
+| `-timeout`      | 超时时间       | `go test -timeout 5m`         |
+| `-count N`      | 重复运行       | `go test -count=100`          |
+| `-cpu`          | 指定 CPU 数    | `go test -cpu=1,2,4`          |
+| `-parallel N`   | 并行数         | `go test -parallel=4`         |
+| `-failfast`     | 首次失败后停止 | `go test -failfast`           |
+| `-json`         | JSON 格式输出  | `go test -json`               |
 
 ### 12.9 竞态检测
 

@@ -2,6 +2,7 @@
 title: 使用Markdown和XML构建提示词
 pubDatetime: 2025-08-03
 description: 提示词工程
+modDatetime: 2026-03-03T10:42:49+08:00
 featured: false
 draft: false
 tags:
