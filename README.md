@@ -8,7 +8,7 @@
 ## 特性
 
 - 基于 `src/data/blog/**/*.md` 的 Markdown/Markdoc 内容工作流
-- 自动从文件系统补全文章的 `pubDatetime` 和 `modDatetime`
+- 自动从 Git 历史补全文章的 `pubDatetime` 和 `modDatetime`
 - 内置全文搜索、标签页、归档页、RSS 和 sitemap
 - 支持动态 OG 图片与文章分享图
 - 本地可通过 Keystatic 可视化编辑文章
@@ -41,20 +41,22 @@ pnpm dev
 
 ## 常用命令
 
-| 命令                | 说明                                           |
-| ------------------- | ---------------------------------------------- |
-| `pnpm dev`          | 启动本地开发服务器                             |
-| `pnpm build`        | 执行类型检查、构建站点并生成 Pagefind 搜索索引 |
-| `pnpm preview`      | 本地预览生产构建结果                           |
-| `pnpm lint`         | 运行 ESLint                                    |
-| `pnpm format`       | 使用 Prettier 格式化仓库                       |
-| `pnpm format:check` | 检查格式是否符合 Prettier 规则                 |
-| `pnpm sync`         | 生成 Astro 类型定义                            |
+| 命令                       | 说明                                           |
+| -------------------------- | ---------------------------------------------- |
+| `pnpm dev`                 | 启动本地开发服务器                             |
+| `pnpm build`               | 执行类型检查、构建站点并生成 Pagefind 搜索索引 |
+| `pnpm preview`             | 本地预览生产构建结果                           |
+| `pnpm backfill:post-dates` | dry-run 检查并预览文章时间回填结果             |
+| `pnpm lint`                | 运行 ESLint                                    |
+| `pnpm format`              | 使用 Prettier 格式化仓库                       |
+| `pnpm format:check`        | 检查格式是否符合 Prettier 规则                 |
+| `pnpm sync`                | 生成 Astro 类型定义                            |
 
 ## 项目结构
 
 ```text
 .
+├── scripts/                # 维护脚本，例如文章时间回填
 ├── public/                 # 静态资源与构建后复制的 pagefind 文件
 ├── src/
 │   ├── assets/             # 图标与文章图片
@@ -90,6 +92,8 @@ src/data/blog/2026/go-channel-deep-dive.md
 ---
 title: 文章标题
 description: 文章摘要
+pubDatetime: 2026-03-07T09:45:26+08:00
+modDatetime: 2026-03-08T21:10:00+08:00
 tags: [Go, Distributed Systems]
 featured: false
 draft: true
@@ -98,7 +102,8 @@ draft: true
 
 说明：
 
-- `pubDatetime` 和 `modDatetime` 可省略，系统会优先从文件时间自动推导。
+- `pubDatetime` 和 `modDatetime` 可省略，系统会优先从 Git 历史推导。
+- 如需把缺失时间写回 frontmatter，可执行 `pnpm backfill:post-dates -- --write`。
 - 新文章默认建议使用 `draft: true`，确认后再发布。
 - 使用 ASCII 图表时请只写英文，避免中英文混排导致对齐错位。
 

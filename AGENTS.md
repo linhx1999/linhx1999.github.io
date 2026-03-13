@@ -12,14 +12,15 @@
 本仓库是一个基于 Astro 的博客项目。源码位于 `src/`：页面在
 `src/pages`，可复用 UI 在 `src/components`，布局在 `src/layouts`，工具函数在
 `src/utils`。博客内容存放于 `src/data/blog/**/*.md`，并由
-`src/content.config.ts` 校验。静态资源放在 `public/`；不要手动修改
-`public/pagefind/`，因为它会在构建时自动生成。
+`src/content.config.ts` 校验。维护脚本放在 `scripts/`。静态资源放在 `public/`；
+不要手动修改 `public/pagefind/`，因为它会在构建时自动生成。
 
 ## 构建、测试与开发命令
 
 - `pnpm dev`：在 `localhost:4321` 启动本地开发服务器。
 - `pnpm build`：执行 `astro check`，构建站点，并生成 Pagefind 搜索资源。
 - `pnpm preview`：本地预览生产构建结果。
+- `pnpm backfill:post-dates`：dry-run 预览缺失文章时间的回填结果。
 - `pnpm lint`：运行 ESLint 检查整个仓库。
 - `pnpm format` / `pnpm format:check`：写入或校验 Prettier 格式。
 
@@ -36,7 +37,8 @@ Astro 组件使用 PascalCase，例如 `Card.astro`；工具函数使用 camelCa
 
 当前仓库尚未配置专门的测试框架。提交 PR 前，至少执行 `pnpm lint`、
 `pnpm format:check` 和 `pnpm build`。如果改动了内容或页面，请在 `pnpm dev`
-下检查对应路由，重点确认搜索、标签、归档和文章详情页是否正常。
+下检查对应路由，重点确认搜索、标签、归档和文章详情页是否正常。若调整了文章
+时间逻辑，还应执行 `pnpm backfill:post-dates` 检查回填结果是否符合预期。
 
 ## Commit 与 Pull Request 规范
 

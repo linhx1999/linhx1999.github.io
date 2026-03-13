@@ -3,8 +3,8 @@ title: 文章标题，必须填写
 # description: 文章描述，用于摘要和 SEO 优化。可选
 
 # 时间和作者（可选，有默认值）
-# pubDatetime: 发布时间，默认从文件创建时间自动获取
-# modDatetime: 修改时间，默认从文件修改时间自动获取（与创建时间差异小于1分钟则为 null）
+# pubDatetime: 发布时间，默认从 Git 首次提交时间自动获取
+# modDatetime: 修改时间，默认从 Git 最后一次修改时间自动获取（无后续修改则为 null）
 # author: 作者，默认值为 config.site.author
 # timezone: 时区，默认值为 config.site.timezone（Asia/Shanghai）
 
