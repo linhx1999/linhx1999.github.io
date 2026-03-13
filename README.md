@@ -84,6 +84,7 @@ src/data/blog/2026/go-channel-deep-dive.md
 
 ```text
 src/data/blog/2026/http-to-quic-primer.md
+src/data/blog/2026/mcp-streamable-http.md
 ```
 
 对应访问路径通常为：
@@ -113,6 +114,9 @@ draft: true
 - 新文章默认建议使用 `draft: true`，确认后再发布。
 - 使用 ASCII 图表时请只写英文，避免中英文混排导致对齐错位。
 - 综述型文章建议围绕一条主线组织内容，例如协议分层、握手流程和版本演进。
+- 协议或规范类文章建议注明所依据的规范版本或日期，避免读者把旧行为当成当前标准。
+- 首次出现的英文缩写建议补充全称，例如 `SSE` 写为 `Server-Sent Events`。
+- 对比协议或接口时，优先给出一个最小普通请求示例作为基线，再展示标准协议的额外约束，便于读者快速看出差异。
 
 ### Keystatic 本地编辑
 
