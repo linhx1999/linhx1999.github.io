@@ -144,4 +144,6 @@ pnpm format:check
 pnpm build
 ```
 
+同时请保持仓库整洁：不要提交无引用的静态资源、构建产物或长期注释掉的模板代码。
+
 贡献约定见 [AGENTS.md](./AGENTS.md)。

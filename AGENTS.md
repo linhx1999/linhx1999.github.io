@@ -29,7 +29,8 @@
 Prettier 约定：2 空格缩进、双引号、保留分号、80 列换行、箭头函数尽量省略括号。
 Astro 组件使用 PascalCase，例如 `Card.astro`；工具函数使用 camelCase，例如
 `slugify.ts`；Astro props 接口统一命名为 `Props`。ESLint 禁止
-`console.log`，提交前请移除调试日志。
+`console.log`，提交前请移除调试日志。不要保留注释掉的模板占位代码，也不要提交
+未被引用的静态资源。
 
 ## 测试指南
 
