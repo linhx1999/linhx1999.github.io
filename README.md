@@ -80,6 +80,12 @@ pnpm dev
 src/data/blog/2026/go-channel-deep-dive.md
 ```
 
+近期新增的综述类文章也可作为结构参考，例如：
+
+```text
+src/data/blog/2026/http-to-quic-primer.md
+```
+
 对应访问路径通常为：
 
 ```text
@@ -106,6 +112,7 @@ draft: true
 - 如需把缺失时间写回 frontmatter，可执行 `pnpm backfill:post-dates -- --write`。
 - 新文章默认建议使用 `draft: true`，确认后再发布。
 - 使用 ASCII 图表时请只写英文，避免中英文混排导致对齐错位。
+- 综述型文章建议围绕一条主线组织内容，例如协议分层、握手流程和版本演进。
 
 ### Keystatic 本地编辑
 
