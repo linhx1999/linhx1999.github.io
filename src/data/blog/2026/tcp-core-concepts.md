@@ -192,7 +192,185 @@ World
 - 分隔符协议，例如 `\n`
 - 长度字段 + 消息体
 
-工程实践里最常见的是“长度前缀 + 负载”的协议格式。
+工程实践里最常见的是”长度前缀 + 负载”的协议格式。
+
+### 用 Go 实现”长度前缀 + 消息体”协议
+
+下面用一个示例展示如何用 `4` 字节长度前缀来解决黏包问题。
+协议格式为：`[4 字节长度][消息体]`
+
+#### 协议编解码工具
+
+```go
+// protocol.go
+package main
+
+import (
+	“encoding/binary”
+	“io”
+)
+
+const maxMessageSize = 1024 * 1024 // 限制最大 1MB，防止恶意包
+
+// EncodeMessage 将消息编码为 [长度][消息体] 格式
+func EncodeMessage(msg []byte) []byte {
+	buf := make([]byte, 4+len(msg))
+	binary.BigEndian.PutUint32(buf[:4], uint32(len(msg)))
+	copy(buf[4:], msg)
+	return buf
+}
+
+// ReadMessage 从连接中读取一条完整消息
+func ReadMessage(r io.Reader) ([]byte, error) {
+	// 先读 4 字节长度
+	lenBuf := make([]byte, 4)
+	if _, err := io.ReadFull(r, lenBuf); err != nil {
+		return nil, err
+	}
+	length := binary.BigEndian.Uint32(lenBuf)
+
+	// 安全检查
+	if length > maxMessageSize {
+		return nil, io.ErrShortBuffer
+	}
+
+	// 再读消息体
+	body := make([]byte, length)
+	if _, err := io.ReadFull(r, body); err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+```
+
+#### 服务端代码
+
+```go
+// server.go
+package main
+
+import (
+	“fmt”
+	“io”
+	“log”
+	“net”
+)
+
+func handleConn(conn net.Conn) {
+	defer conn.Close()
+	fmt.Printf(“客户端已连接: %s\n”, conn.RemoteAddr())
+
+	for {
+		msg, err := ReadMessage(conn)
+		if err != nil {
+			if err != io.EOF {
+				log.Printf(“读取错误: %v”, err)
+			}
+			break
+		}
+		fmt.Printf(“收到 (%d 字节): %s\n”, len(msg), string(msg))
+
+		// Echo: 编码后返回
+		reply := EncodeMessage(msg)
+		conn.Write(reply)
+	}
+	fmt.Printf(“客户端断开: %s\n”, conn.RemoteAddr())
+}
+
+func main() {
+	listener, err := net.Listen(“tcp”, “:8080”)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer listener.Close()
+	fmt.Println(“服务端启动，监听 :8080”)
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			log.Printf(“接受连接失败: %v”, err)
+			continue
+		}
+		go handleConn(conn)
+	}
+}
+```
+
+#### 客户端代码
+
+```go
+// client.go
+package main
+
+import (
+	“bufio”
+	“fmt”
+	“io”
+	“log”
+	“net”
+	“os”
+)
+
+func main() {
+	conn, err := net.Dial(“tcp”, “127.0.0.1:8080”)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+	fmt.Println(“已连接到服务端”)
+
+	// 发送协程：读取标准输入，编码后发送
+	go func() {
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			line := scanner.Text()
+			encoded := EncodeMessage([]byte(line))
+			conn.Write(encoded)
+		}
+		conn.Close()
+	}()
+
+	// 接收协程：按协议解码
+	for {
+		msg, err := ReadMessage(conn)
+		if err != nil {
+			if err != io.EOF {
+				log.Printf(“读取响应错误: %v”, err)
+			}
+			break
+		}
+		fmt.Printf(“服务端返回: %s\n”, string(msg))
+	}
+	fmt.Println(“连接已关闭”)
+}
+```
+
+#### 运行方式
+
+```bash
+# 终端 1：启动服务端
+go run protocol.go server.go
+
+# 终端 2：启动客户端
+go run protocol.go client.go
+```
+
+#### 为什么能解决黏包
+
+假设客户端连续发送两条消息 `”Hello”` 和 `”World”`，编码后的字节流是：
+
+```text
+[00 00 00 05] [H e l l o] [00 00 00 05] [W o r l d]
+ 长度=5       消息体       长度=5       消息体
+```
+
+即使这两条数据被合并成一个 `TCP` 段发送，或者被拆成多个段，接收方只需：
+
+1. 先读 `4` 字节，得到消息长度
+2. 再读对应长度的消息体
+3. 循环处理下一条消息
+
+消息边界由长度字段明确标识，不再依赖 `TCP` 的分段行为。
 
 ## 七、滑动窗口怎么理解：rwnd 管接收能力，cwnd 管网络承受能力
 
