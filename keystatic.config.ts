@@ -38,13 +38,13 @@ export default config({
           description: "文章描述，用于摘要和 SEO 优化",
           multiline: true,
         }),
-        pubDatetime: fields.date({
+        pubDatetime: fields.datetime({
           label: "发布日期",
-          description: "默认从文件创建时间自动获取",
+          description: "默认从 Git 首次提交时间自动获取",
         }),
-        modDatetime: fields.date({
+        modDatetime: fields.datetime({
           label: "修改日期",
-          description: "默认从文件修改时间自动获取（与创建时间差异小于1分钟则为空）",
+          description: "默认从 Git 最后一次修改时间自动获取（无后续修改则为空）",
         }),
         draft: fields.checkbox({
           label: "草稿",

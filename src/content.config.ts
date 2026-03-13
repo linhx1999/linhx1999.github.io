@@ -1,15 +1,17 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 import { SITE } from "@/config";
-import { statSync } from "node:fs";
+import { getGitPostDates } from "@/utils/getGitPostDates";
 
 export const BLOG_PATH = "src/data/blog";
 
-// 自定义 loader，自动从文件系统获取创建和修改时间
+// 自定义 loader，自动从 Git 历史补全创建和修改时间
 const blogLoader = {
   name: "blog-with-auto-dates",
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   load: async (context: any) => {
+    context.store.clear();
+
     // 使用 glob loader 先加载所有文件
     const baseLoader = glob({
       pattern: "**/[^_]*.md",
@@ -22,24 +24,16 @@ const blogLoader = {
     const interceptedParseData = async (options: any) => {
       const { filePath, data } = options;
 
-      // 如果 frontmatter 中没有指定日期，从文件系统获取
+      // 如果 frontmatter 中没有指定日期，从 Git 历史获取
       if (filePath) {
-        try {
-          const stats = statSync(filePath);
+        const { pubDatetime, modDatetime } = getGitPostDates(filePath);
 
-          // 发布日期：使用文件创建时间
-          if (!data.pubDatetime) {
-            data.pubDatetime = stats.birthtime;
-          }
+        if (!data.pubDatetime) {
+          data.pubDatetime = pubDatetime;
+        }
 
-          // 修改日期：只有当修改时间明显不同于创建时间时才设置
-          if (!data.modDatetime) {
-            const timeDiff = stats.mtime.getTime() - stats.birthtime.getTime();
-            const hasSignificantChange = timeDiff > 60000; // 超过1分钟差异
-            data.modDatetime = hasSignificantChange ? stats.mtime : null;
-          }
-        } catch {
-          // 如果无法获取文件状态，保持原值
+        if (!data.modDatetime) {
+          data.modDatetime = modDatetime;
         }
       }
 
