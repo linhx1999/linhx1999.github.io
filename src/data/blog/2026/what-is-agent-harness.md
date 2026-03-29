@@ -2,7 +2,7 @@
 title: 什么是 Harness：从 The long-running agent problem 理解 Agent 长期运行编排框架
 description: 结合 Anthropic 于 2025 年 11 月 26 日和 2026 年 3 月 24 日发布的两篇工程文章，梳理 harness 在 agent 语境中的含义，以及它如何解决长期任务中的失忆、跑偏、误判和验收问题。
 pubDatetime: 2026-03-29T10:30:00+08:00
-draft: true
+draft: false
 featured: false
 tags:
   - ai-agent
