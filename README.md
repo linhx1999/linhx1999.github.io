@@ -86,6 +86,7 @@ src/data/blog/2026/go-channel-deep-dive.md
 src/data/blog/2026/http-to-quic-primer.md
 src/data/blog/2026/mcp-streamable-http.md
 src/data/blog/2026/tcp-core-concepts.md
+src/data/blog/2026/what-is-agent-harness.md
 ```
 
 对应访问路径通常为：
@@ -118,6 +119,7 @@ draft: true
 - 文章页已提供自动生成的浮动目录，新文章默认不需要再手写 `## TOC`。
 - 旧文章若保留 `## TOC`，页面会兼容并优先显示浮动目录；不建议继续作为新文章写法。
 - 综述型文章建议围绕一条主线组织内容，例如协议分层、握手流程和版本演进。
+- AI Agent / LLM 工程类综述建议先区分“模型能力”与“编排框架”的边界，再展开任务拆分、状态交接、工具调用和验收机制，避免把 prompt 技巧与系统设计混成一层。
 - 协议或规范类文章建议注明所依据的规范版本或日期，避免读者把旧行为当成当前标准。
 - 首次出现的英文缩写建议补充全称，例如 `SSE` 写为 `Server-Sent Events`。
 - 对比协议或接口时，优先给出一个最小普通请求示例作为基线，再展示标准协议的额外约束，便于读者快速看出差异。
